@@ -1,5 +1,6 @@
 #include <apricot/master.h>
 #include <apricot/pool.h>
+#include <apricot/log.h>
 #include <apricot/csapp.h>
 #include <stdlib.h>
 
@@ -24,6 +25,7 @@ void master_start(int port)
 
 void master_stop()
 {
+	log_apricot_stop();
 	pool_destroy();
 }
 

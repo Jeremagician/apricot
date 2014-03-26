@@ -24,6 +24,7 @@ void pool_create(int lfd)
 	for(i = 0; i < POOL_SIZE; i++)
 	{
 		pid_t pid = Fork();
+		
 		if(pid == 0) // Fils
 			worker_start(listenfd);
 		else // Pere
@@ -34,7 +35,9 @@ void pool_create(int lfd)
 void pool_destroy()
 {
 	int i;
+	
 	reincarnate_stop();
+	
 	for(i = 0; i < POOL_SIZE; i++)
 	{
 		/* Demande à un worker de se terminer */
@@ -73,10 +76,16 @@ static void reincarnate(pid_t pid)
 		if(pool[i] == pid)
 		{
 			pid_t p = Fork();
+			
 			if(p == 0)
+			{
 				worker_start(listenfd);
+			}
 			else
+			{
 				pool[i] = p;
+				break; /* Quand le pere a trouvé il doit sortir */
+			}
 		}
 		i++;
 	}
