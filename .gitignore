@@ -2,7 +2,6 @@
 src/*.o
 *~
 /bin/apricot
-apricot*
 autom4te.cache
 config.h
 config.status
