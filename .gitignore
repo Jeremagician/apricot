@@ -1,4 +1,9 @@
 *.o
+src/*.o
 *~
-/bin
-apricot
+/bin/apricot
+apricot*
+autom4te.cache
+config.h
+config.status
+Makefile
