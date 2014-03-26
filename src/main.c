@@ -1,4 +1,5 @@
 #include <apricot/master.h>
+#include <apricot/log.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -19,7 +20,10 @@ int main(int argc, char ** argv)
         exit(1);
     }
 	port = atoi(argv[1]);
-	
+
+	log_set_level(LOG_ALL);
+	log_set_file(stdout);
+
 	/* launch master */
 	master_start(port);
 

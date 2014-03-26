@@ -13,7 +13,7 @@ void worker_start(int lfd)
 	struct sockaddr_in client_addr;
 	listenfd = lfd;
 	init_signals();
-	
+
 	for(;;)
 	{
 		client_len = sizeof(client_addr);

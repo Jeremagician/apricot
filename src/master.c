@@ -2,6 +2,7 @@
 #include <apricot/pool.h>
 #include <apricot/csapp.h>
 #include <stdlib.h>
+#include <apricot/log.h>
 
 /* Prototypes */
 static void signal_handler(int sig);
@@ -10,14 +11,16 @@ static void init_signals();
 void master_start(int port)
 {
 	int listenfd;
-	
+
     listenfd = Open_listenfd(port);
-	
+
 	/* init signals */
 	init_signals();
-	
+
 	pool_create(listenfd);
-	
+
+	log_debug("Apricot web server started");
+
 	for(;;)
 		sleep(-1);
 }
@@ -39,11 +42,11 @@ static void signal_handler(int sig)
 static void init_signals()
 {
 	sigset_t set;
-	
+
 	sigfillset(&set);
 	sigdelset(&set, SIGINT);
 	sigdelset(&set, SIGCHLD);
 	sigprocmask(SIG_SETMASK, &set, NULL);
-	
+
 	signal(SIGINT,  signal_handler);
 }
