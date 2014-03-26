@@ -2,7 +2,7 @@
 #include <apricot/rewrite.h>
 #include <apricot/csapp.h>
 
-void dispatch(int acceptfd, struct sockaddr_in client_addr)
+void dispatch(int acceptfd, struct sockaddr_in *client_addr)
 {
 	char buf[MAXLINE];
 	char uri[MAXLINE];
