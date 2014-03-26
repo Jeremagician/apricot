@@ -7,11 +7,11 @@
 static void signal_handler(int sig);
 static void init_signals();
 
-void master_start()
+void master_start(int port)
 {
 	int listenfd;
 	
-	/* Listenfd */
+    listenfd = Open_listenfd(port);
 	
 	/* init signals */
 	init_signals();
@@ -24,12 +24,16 @@ void master_start()
 
 void master_stop()
 {
-	pool_destroy(listenfd);
+	pool_destroy();
 }
 
 static void signal_handler(int sig)
 {
-	master_stop();
+	if(sig == SIGINT)
+	{
+		master_stop();
+		exit(EXIT_SUCCESS);
+	}
 }
 
 static void init_signals()

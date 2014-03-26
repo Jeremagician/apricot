@@ -17,6 +17,8 @@ void pool_create(int lfd)
 {
 	int i;
 	listenfd = lfd;
+
+	reincarnate_start();
 	
 	/* Remplissage de la pool */
 	for(i = 0; i < POOL_SIZE; i++)
@@ -36,7 +38,7 @@ void pool_destroy()
 	for(i = 0; i < POOL_SIZE; i++)
 	{
 		/* Demande à un worker de se terminer */
-		kill(poll[i], SIGTERM);
+		kill(pool[i], SIGTERM);
 	}
 
 	while(waitpid(-1, NULL, 0) > 0); /* On attend la terminaison de tout les fils */
@@ -44,13 +46,16 @@ void pool_destroy()
 
 static void signal_handler(int sig)
 {
-	/* sig = SIGCHLD "par construction"
-	   Un worker s'est arrêté anormalement.
-	   On le réincarne.
-	 */
-	pid_t pid;
-	while((pid = Waitpid(-1, NULL, 0)) > 0)
-		reincarnate(pid);
+	/*
+	  Un worker s'est arrêté anormalement.
+	  On le réincarne.
+	*/
+	if(sig == SIGCHLD)
+	{
+		pid_t pid;
+		while((pid = Waitpid(-1, NULL, 0)) > 0)
+			reincarnate(pid);
+	}
 }
 
 static void reincarnate(pid_t pid)
@@ -69,7 +74,7 @@ static void reincarnate(pid_t pid)
 		{
 			pid_t p = Fork();
 			if(p == 0)
-				worker_start(listen_fd);
+				worker_start(listenfd);
 			else
 				pool[i] = p;
 		}
@@ -90,5 +95,5 @@ static void reincarnate_stop()
 	   Lorsque l'on veux arrêter le server (et detruire la pool)
 	   Il ne faut pas reincarner les workers
 	*/
-	signal(SIGCHLD,  SIGIGN);
+	signal(SIGCHLD,  SIG_IGN);
 }

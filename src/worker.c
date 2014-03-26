@@ -9,7 +9,7 @@ static void init_signals();
 
 void worker_start(int lfd)
 {
-	int client_lenn, confd;
+	int client_len, confd;
 	struct sockaddr_in client_addr;
 	listenfd = lfd;
 	init_signals();
@@ -17,17 +17,19 @@ void worker_start(int lfd)
 	for(;;)
 	{
 		client_len = sizeof(client_addr);
-		confd = Accept(listenfd, (SA *)&client_addr, (socklen_t*)&client_len);
-		dispatch(confd, &client_addr);
-		Close(confd);
+		confd = accept(listenfd, (SA *)&client_addr, (socklen_t*)&client_len);
+		dispatch(confd, (SA *)&client_addr);
+		close(confd);
 	}
-	Close(listenfd);
 }
 
 static void signal_handler(int sig)
 {
-	/* sig = sigterm "par construction" */
-	Close(listenfd);
+	if(sig == SIGTERM)
+	{
+		close(listenfd); // On ferme silencieusement listenfd
+		exit(EXIT_SUCCESS);
+	}
 }
 
 static void init_signals()
