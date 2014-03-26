@@ -2,13 +2,13 @@ Apricot is a lightweight web server written in c.
 
 * Build
 
-./configure
-make
+	./configure
+	make
 
 * Regenerate Makefile and configure files ?
 
-./autogen.sh
+	./autogen.sh
 
 * Generate an archive
 
-make dist
+	make dist
