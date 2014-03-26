@@ -12,7 +12,7 @@ void dispatch(int acceptfd, SA *client_addr)
 	(void)http_code; /* Temporary hack */
 	rewrite(uri);
 
-	if(1 /* if dynamic */)
+	if(0 /* if dynamic */)
 	{
 		http_code = dynamic_serve(acceptfd, uri);
 	}
