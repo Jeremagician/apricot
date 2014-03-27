@@ -4,14 +4,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#define LOG_ALL ~0
-
 enum
 {
 	LOG_DEBUG = 1 << 0,
 	LOG_INFO = 1 << 1,
 	LOG_WARNING = 1 << 2,
-	LOG_ERROR = 1 << 3
+	LOG_ERROR = 1 << 3,
+	LOG_ALL = ~0
 };
 
 void log_info(char * message, ...);
