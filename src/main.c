@@ -66,17 +66,27 @@ int main(int argc, char ** argv)
 		}
 	}
 	
-	/* read configuration file */
+	if(optind != argc)
+	{
+		fprintf(stderr, "Bad option\n");
+		print_help();
+		exit(EXIT_FAILURE);
+	}
+	
+	/* read configuration file 
+	Affiche les erreurs sur l'entrée standard au lieu du fichier de log
+	car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
+	sa configuration.
+	*/
 	conf_t conf = conf_read();
 	
 	if(daemon)
 	{
 		daemonize();
 		
-		/* if we are a daemon we have to write logs to
-		a generic system file until we can do better, like
-		syslog for example. This behavior (which file) will be set
-		in apricot.conf */
+		/* Si on est un démon on doit écrire les logs dans un fichier
+		disponible sur l'ensemble du système. On utilise pour le
+		moment /tmp/apricot.log */
 		log_file = fopen(DEFAULT_DAEMON_LOGFILE, "a+");
 	}
 	else
@@ -100,7 +110,7 @@ int main(int argc, char ** argv)
 void print_help()
 {
 	printf("\nHelp\n");
-	printf("-d : launch the server as a daemon\n");
+	printf("-d : launch the server as a daemon, logs are written in /tmp/apricot.log\n");
 	printf("-p <port> : listen port <port>, override settings in apricot.conf\n");
 	printf("-v : display the current version of apricot\n");
 	putchar('\n');
@@ -127,6 +137,13 @@ void daemonize()
 	if(setsid() == -1)
 	{
 		fprintf(stderr, "Failed to daemonize, setsid failed\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	/* On vérifie que notre père est bien init */
+	if(getppid() != 1)
+	{
+		fprintf(stderr, "Failed to daemonize, not child process of init\n");
 		exit(EXIT_FAILURE);
 	}
 	

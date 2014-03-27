@@ -1,4 +1,4 @@
-AC_PREREQ([1.10])
+AC_PREREQ([2.00])
 AC_INIT([apricot], [0.1], [0x1BADB001@yopmail.com])
 AM_INIT_AUTOMAKE
 
