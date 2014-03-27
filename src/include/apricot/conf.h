@@ -6,6 +6,6 @@
 	} conf_t;
 	
 	/* Lit le fichier de configuration */
-	conf_t conf_read();
+	conf_t conf_read(const char * conf_filename);
 
 #endif

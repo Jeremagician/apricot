@@ -11,18 +11,21 @@
 /* Prototypes */
 static FILE * open_file();
 
-conf_t conf_read()
+conf_t conf_read(const char * conf_filename)
 {
 	conf_t conf;
 	FILE * conf_file;
 	char buf[255];
 	char buf2[255];
 	
-	conf_file = open_file();
+	if(conf_filename)
+		conf_file = fopen(conf_filename, "r");
+	else
+		conf_file = open_file();
 	
 	if(!conf_file)
 	{
-		fprintf(stderr, "Failed to find configuration file apricot.conf");
+		fprintf(stderr, "Failed to find configuration file");
 		exit(EXIT_FAILURE);
 	}
 	

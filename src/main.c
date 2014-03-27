@@ -21,8 +21,9 @@ int main(int argc, char ** argv)
 	int opt;
 	int daemon = 0;
 	FILE * log_file;
+	char * user_supplied_conf_filename = NULL;
     
-    while((opt = getopt(argc, argv, "dp:vh")) != -1)
+    while((opt = getopt(argc, argv, "dp:vhc:")) != -1)
 	{
 		switch(opt)
 		{
@@ -57,6 +58,10 @@ int main(int argc, char ** argv)
 				print_help();
 				exit(EXIT_FAILURE);
 			break;
+			
+			case 'c':
+				user_supplied_conf_filename = optarg;
+			break;
 				
 			case ':':
 				fprintf(stderr, "Invalid option\n");
@@ -74,11 +79,11 @@ int main(int argc, char ** argv)
 	}
 	
 	/* read configuration file 
-	Affiche les erreurs sur l'entrée standard au lieu du fichier de log
-	car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
-	sa configuration.
+		Affiche les erreurs sur l'entrée standard au lieu du fichier de log
+		car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
+		sa configuration.
 	*/
-	conf_t conf = conf_read();
+	conf_t conf = conf_read(user_supplied_conf_filename);
 	
 	if(daemon)
 	{
@@ -112,7 +117,9 @@ void print_help()
 	printf("\nHelp\n");
 	printf("-d : launch the server as a daemon, logs are written in /tmp/apricot.log\n");
 	printf("-p <port> : listen port <port>, override settings in apricot.conf\n");
+	printf("-c <configuration file> : use the given configuration file\n");
 	printf("-v : display the current version of apricot\n");
+	printf("-h : display this help\n");
 	putchar('\n');
 }
 
