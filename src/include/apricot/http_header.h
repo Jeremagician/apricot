@@ -1,6 +1,8 @@
 #ifndef _HTTP_HEADER_
 #define _HTTP_HEADER_
 
+/* from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
+
 typedef struct {
 	/* Request line */
 	int method;
@@ -14,7 +16,7 @@ typedef struct {
 	char accept-encoding[ACCEPT_ENCODING_MAX];
 	char accept-language[ACCEPT_LANGUAGE_MAX];
 	char authorization[AUTHORIZATION_MAX];
-	char expectation[EXPECTATION_MAX];
+	char expect[EXPECTATION_MAX];
 	char from[FROM_MAX];
 	char host[HOST_MAX];
 	char referer[URI_MAX];
