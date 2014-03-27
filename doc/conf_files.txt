@@ -1,0 +1,9 @@
+Syntax of apricot.conf
+
+apricot.conf contains options for apricot web server which are read
+at server startup. There is one option per line and each line is like :
+	option_name argument1 argument2 ...
+	
+Available options :
+
+	port port_number (required)
