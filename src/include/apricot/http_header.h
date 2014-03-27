@@ -1,7 +1,8 @@
 #ifndef _HTTP_HEADER_
 #define _HTTP_HEADER_
 
-#define URI_MAX 2048
+#define URI_MAX 8096
+#define METHOD_MAX 25
 #define HOST_MAX 255
 #define ACCEPT_MAX 255
 #define ACCEPT_CHARSET_MAX 80
@@ -19,7 +20,8 @@
 #define UPGRADE_MAX 80
 #define VIA_MAX 80
 
-/* from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
+/* Contains the header of a request message
+from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
 
 typedef struct {
 	/* Request line */
@@ -77,6 +79,8 @@ enum{REQUEST_NO_CACHE,
 	REQUEST_CACHE_EXTENSION
 	};
 	
-void http_request_read(int fd, http_request_t * request);
+/* fills the request header according to the data read on fd */
+	
+int http_request_read(int fd, http_request_t * request);
 
 #endif
