@@ -102,7 +102,7 @@ int main(int argc, char ** argv)
 		port = conf.listen_port;
 
 	/* launch master */
-	master_start(port);
+	master_start(port, argv);
 
 	return EXIT_SUCCESS;
 }

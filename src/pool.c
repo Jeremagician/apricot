@@ -1,6 +1,10 @@
 #include <apricot/pool.h>
 #include <apricot/csapp.h>
 #include <apricot/worker.h>
+#include <apricot/master.h>
+#include <apricot/log.h>
+
+#include <string.h>
 
 #define POOL_SIZE 16
 
@@ -26,7 +30,10 @@ void pool_create(int lfd)
 		pid_t pid = Fork();
 		
 		if(pid == 0) // Fils
+		{
+			strcpy(arguments[0], "apricot [worker]");
 			worker_start(listenfd);
+		}
 		else // Pere
 			pool[i] = pid;
 	}
@@ -57,7 +64,10 @@ static void signal_handler(int sig)
 	{
 		pid_t pid;
 		while((pid = Waitpid(-1, NULL, 0)) > 0)
+		{
+			log_info("Reincarnation worker pid %i", pid);
 			reincarnate(pid);
+		}
 	}
 }
 
@@ -79,6 +89,7 @@ static void reincarnate(pid_t pid)
 			
 			if(p == 0)
 			{
+				strcpy(arguments[0], "apricot [worker]");
 				worker_start(listenfd);
 			}
 			else

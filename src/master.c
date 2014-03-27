@@ -2,16 +2,23 @@
 #include <apricot/pool.h>
 #include <apricot/log.h>
 #include <apricot/csapp.h>
-#include <stdlib.h>
 #include <apricot/log.h>
+
+#include <stdlib.h>
+#include <string.h>
 
 /* Prototypes */
 static void signal_handler(int sig);
 static void init_signals();
 
-void master_start(int port)
+char ** arguments;
+
+void master_start(int port, char ** argv)
 {
 	int listenfd;
+	
+	strcpy(argv[0], "apricot [master]");
+	arguments = argv;
 
     listenfd = Open_listenfd(port);
 
