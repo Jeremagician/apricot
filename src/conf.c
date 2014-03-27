@@ -1,6 +1,5 @@
 #include <apricot/conf.h>
 #include <apricot/master.h>
-#include <apricot/log.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,7 +22,7 @@ conf_t conf_read()
 	
 	if(!conf_file)
 	{
-		log_error("Failed to find configuration file apricot.conf");
+		fprintf(stderr, "Failed to find configuration file apricot.conf");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -37,7 +36,7 @@ conf_t conf_read()
 	
 		if(sscanf(buf, "%25s", buf2) != 1)
 		{
-			log_error("Failed to read configuration file, bad syntax");
+			fprintf(stderr, "Failed to read configuration file, bad syntax");
 			exit(EXIT_FAILURE);
 		}
 		
@@ -45,18 +44,11 @@ conf_t conf_read()
 		{
 			sscanf(buf, "%25s %5u", buf2, &conf.listen_port);
 		}
-		else
-		{
-			strcpy(buf, "Unknown option in apricot.conf : ");
-			strcat(buf, buf2);
-			log_error(buf);
-			exit(EXIT_FAILURE);
-		}
 	}
 	
 	if(conf.listen_port <= 0 || conf.listen_port >= 65536)
 	{
-		log_error("Invalid port specified in apricot.conf");
+		fprintf(stderr, "Invalid port specified in apricot.conf");
 		exit(EXIT_FAILURE);
 	}
 	
