@@ -10,6 +10,7 @@ void dispatch(int acceptfd, SA *client_addr)
 	char uri[MAXLINE];
 	int http_code;
 	(void)http_code; /* Temporary hack */
+	
 	rewrite(uri);
 
 	if(0 /* if dynamic */)

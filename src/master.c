@@ -20,7 +20,7 @@ void master_start(int port)
 
 	pool_create(listenfd);
 
-	log_info("Apricot web server started");
+	log_info("Apricot web server started on port %i", port);
 
 	for(;;)
 		sleep(-1);

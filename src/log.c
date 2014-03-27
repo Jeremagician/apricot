@@ -68,7 +68,6 @@ static void vlog(char * tag, char * message, va_list ap)
 {
 	time_t now;
 	char buf_time[255];
-	assert(log_file);
 
 	time(&now);
 	strftime(buf_time, 255, "%Y-%m-%d %02k:%02M", localtime(&now));
