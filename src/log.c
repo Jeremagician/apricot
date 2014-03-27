@@ -1,35 +1,81 @@
 #include <apricot/log.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
+#include <time.h>
+#include <stdlib.h>
 
-static FILE * logfile;
+static void vlog(char * tag, char * message, va_list ap);
 
-/* Prototypes */
-static char * get_date();
+static FILE* log_file = NULL;
+static int log_level = 0;
 
-/* Log messages */
-#define LOG_APRICOT_STOP "Apricot stopped"
-
-void log_init(FILE * log_file)
+void log_set_level(int mask)
 {
-	if(!log_file)
-		log_file = stdout;
-	else
-		logfile = log_file;
+	log_level = mask;
 }
 
-static char * get_date()
+void log_set_file(FILE* f)
 {
-	static char buf[255];
-	
-	time_t now = time(NULL);
-	struct tm * now_local = localtime(&now);
-	strftime(buf, 255, "%c", now_local);
-	
-	return buf;
+	log_file = f;
 }
 
-void log_apricot_stop()
+void log_info(char * message, ...)
 {
-	fprintf(logfile, "[%s] %s\n", get_date(), LOG_APRICOT_STOP);
+	if((log_level & LOG_INFO) != 0)
+	{
+		va_list ap;
+		va_start(ap, message);
+		vlog("INFO", message, ap);
+		va_end(ap);
+	}
 }
+
+void log_debug(char * message, ...)
+{
+	if((log_level & LOG_DEBUG) != 0)
+	{
+		va_list ap;
+		va_start(ap, message);
+		vlog("DEBUG", message, ap);
+		va_end(ap);
+	}
+}
+
+void log_warning(char * message, ...)
+{
+	if((log_level & LOG_WARNING) != 0)
+	{
+		va_list ap;
+		va_start(ap, message);
+		vlog("WARNING", message, ap);
+		va_end(ap);
+	}
+}
+
+void log_error(char * message, ...)
+{
+	if((log_level & LOG_ERROR) != 0)
+	{
+		va_list ap;
+		va_start(ap, message);
+		vlog("ERROR", message, ap);
+		va_end(ap);
+	}
+}
+
+static void vlog(char * tag, char * message, va_list ap)
+{
+	time_t now;
+	char buf_time[255];
+	assert(log_file);
+
+	time(&now);
+	strftime(buf_time, 255, "%Y-%m-%d %02k:%02M", localtime(&now));
+
+	fprintf(log_file, "[%s] %s : ", buf_time, tag);
+	vfprintf(log_file, message, ap);
+	fprintf(log_file, "\n");
+}
+
+

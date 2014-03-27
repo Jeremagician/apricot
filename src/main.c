@@ -4,16 +4,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-/*
- - We need to talk about this
-static int debug;
-
-int debug_activated()
-{
-	return debug;
-}
-*/
-
 void print_usage(char ** argv)
 {
 	fprintf(stderr, "usage : %s <port>\n", argv[0]);
@@ -50,8 +40,9 @@ int main(int argc, char ** argv)
 	port = atoi(argv[optind]);
 	
 	/* start log */
-	log_init(stdout); // DEBUG
-	
+	log_set_level(LOG_ALL);
+	log_set_file(stdout);
+
 	/* launch master */
 	master_start(port);
 
