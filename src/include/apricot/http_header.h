@@ -1,6 +1,24 @@
 #ifndef _HTTP_HEADER_
 #define _HTTP_HEADER_
 
+#define URI_MAX 2048
+#define HOST_MAX 255
+#define ACCEPT_MAX 255
+#define ACCEPT_CHARSET_MAX 80
+#define ACCEPT_ENCODING_MAX 80
+#define ACCEPT_LANGUAGE_MAX 80
+#define AUTHORIZATION_MAX 80
+#define EXPECTATION_MAX 80
+#define FROM_MAX 80
+#define TE_MAX 80
+#define USER_AGENT_MAX 80
+#define CONNECTION_MAX 80
+#define DATE_MAX 80
+#define PRAGMA_MAX 80
+#define TRAILER_MAX 80
+#define UPGRADE_MAX 80
+#define VIA_MAX 80
+
 /* from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
 
 typedef struct {
@@ -12,20 +30,20 @@ typedef struct {
 	
 	/* Request headers */
 	char accept[ACCEPT_MAX];
-	char accept-charset[ACCEPT_CHARSET_MAX];
-	char accept-encoding[ACCEPT_ENCODING_MAX];
-	char accept-language[ACCEPT_LANGUAGE_MAX];
+	char accept_charset[ACCEPT_CHARSET_MAX];
+	char accept_encoding[ACCEPT_ENCODING_MAX];
+	char accept_language[ACCEPT_LANGUAGE_MAX];
 	char authorization[AUTHORIZATION_MAX];
 	char expect[EXPECTATION_MAX];
 	char from[FROM_MAX];
 	char host[HOST_MAX];
 	char referer[URI_MAX];
 	char transfer_encoding[TE_MAX];
-	char user-agent[USER_AGENT_MAX];
+	char user_agent[USER_AGENT_MAX];
 	
 	/* Generic headers */
-	int cache-control;
-	int cache-seconds;
+	int cache_control;
+	int cache_seconds;
 	char connection[CONNECTION_MAX];
 	char date[DATE_MAX];
 	char pragma[PRAGMA_MAX];
@@ -59,22 +77,6 @@ enum{REQUEST_NO_CACHE,
 	REQUEST_CACHE_EXTENSION
 	};
 	
-#define URI_MAX 2048
-#define HOST_MAX 255
-#define ACCEPT_MAX 255
-#define ACCEPT_CHARSET_MAX 80
-#define ACCEPT_ENCODING_MAX 80
-#define ACCEPT_LANGUAGE_MAX 80
-#define AUTHORIZATION_MAX 80
-#define EXPECTATION_MAX 80
-#define FROM_MAX 80
-#define TE_MAX 80
-#define USER_AGENT_MAX 80
-#define CONNECTION_MAX 80
-#define DATE_MAX 80
-#define PRAGMA_MAX 80
-#define TRAILER_MAX 80
-#define UPGRADE_MAX 80
-#define VIA_MAX 80
+void http_request_read(int fd, http_request_t * request);
 
 #endif

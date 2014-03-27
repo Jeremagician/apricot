@@ -3,13 +3,22 @@
 #include <apricot/dynamic.h>
 #include <apricot/static.h>
 #include <apricot/csapp.h>
+#include <apricot/http_header.h>
+#include <strings.h>
+
+static http_request_t request;
 
 void dispatch(int acceptfd, SA *client_addr)
 {
-	/*char buf[MAXLINE]; */
 	char uri[MAXLINE];
 	int http_code;
 	(void)http_code; /* Temporary hack */
+	
+	/* fill request with zeros */
+	bzero(&request, sizeof(request));
+	
+	/* read request */
+	http_request_read(acceptfd, &request);
 	
 	rewrite(uri);
 
