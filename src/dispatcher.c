@@ -13,6 +13,7 @@ en global pour ne pas avoir à l'allouer sur la pile à chaque
 appel à dispatch */
 
 static http_request_t request;
+static http_response_t response;
 
 static short is_dynamic(char* uri)
 {
@@ -24,8 +25,9 @@ void dispatch(int acceptfd, SA *client_addr)
 	int http_code;
 	(void)http_code; /* Temporary hack */
 	
-	/* fill request with zeros */
+	/* fill request and response with zeros */
 	bzero(&request, sizeof(request));
+	bzero(&response, sizeof(response));
 	
 	/* read request */
 	int req_result = http_request_read(acceptfd, &request);

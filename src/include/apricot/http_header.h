@@ -8,7 +8,9 @@
 #define ACCEPT_CHARSET_MAX 80
 #define ACCEPT_ENCODING_MAX 80
 #define ACCEPT_LANGUAGE_MAX 80
+#define ACCEPT_RANGES_MAX 80
 #define AUTHORIZATION_MAX 80
+#define ETAG_MAX 80
 #define EXPECTATION_MAX 80
 #define FROM_MAX 80
 #define TE_MAX 80
@@ -16,9 +18,15 @@
 #define CONNECTION_MAX 80
 #define DATE_MAX 80
 #define PRAGMA_MAX 80
+#define PROXY_AUTH_MAX 80
+#define REASON_PHRASE_MAX 80
+#define RETRY_AFTER_MAX 80
+#define SERVER_MAX 80
 #define TRAILER_MAX 80
 #define UPGRADE_MAX 80
+#define VARY_MAX 80
 #define VIA_MAX 80
+#define WWW_AUTH_MAX 80
 
 /* Contains the header of a request message
 from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
@@ -55,6 +63,37 @@ typedef struct {
 	int warn_code;
 	
 } http_request_t;
+
+typedef struct {
+	/* Response line */
+	int http_version_major;
+	int http_version_minor;
+	int status_code;
+	char reason_phrase[REASON_PHRASE_MAX];
+	
+	/* Response headers */
+	char accept_ranges[ACCEPT_RANGES_MAX];
+	int age;
+	char etag[ETAG_MAX];
+	char location[URI_MAX];
+	char proxy_authenticate[PROXY_AUTH_MAX];
+	char retry_after[RETRY_AFTER_MAX];
+	char server[SERVER_MAX];
+	char vary[VARY_MAX];
+	char www_authenticate[WWW_AUTH_MAX];
+	
+	/* Generic headers */
+	int cache_control;
+	int cache_seconds;
+	char connection[CONNECTION_MAX];
+	char date[DATE_MAX];
+	char pragma[PRAGMA_MAX];
+	char trailer[TRAILER_MAX];
+	char upgrade[UPGRADE_MAX];
+	char via[VIA_MAX];
+	int warn_code;
+	
+} http_response_t;
 
 /* methods */
 
