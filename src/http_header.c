@@ -4,6 +4,7 @@
 #include <apricot/http_error.h>
 #include <apricot/log.h>
 	
+#define FIELD_MAX 50
 #define BUF_SIZE METHOD_MAX + URI_MAX + 10
 
 static char buf[BUF_SIZE];
@@ -12,13 +13,15 @@ int http_request_read(int fd, http_request_t * request)
 {
 	rio_t rio;
 	char method[METHOD_MAX];
+	char * field;
+	char * content;
 	
 	Rio_readinitb(&rio, fd);
 	
 	/* read request line */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
 	
-	if(sscanf(buf, "%25s %8096s HTTP/%i.%i", method, request->uri, &request->http_version_major, &request->http_version_minor) != 4)
+	if(sscanf(buf, "%24s %8096s HTTP/%i.%i", method, request->uri, &request->http_version_major, &request->http_version_minor) != 4)
 	{
 		 http_clienterror(fd, HTTP_BAD_REQUEST, "Bad request line");
 		 return -1;
@@ -46,9 +49,24 @@ int http_request_read(int fd, http_request_t * request)
 	/* read other headers */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
     
-    while (!(buf[0] == '\r' && buf[1] == '\n') && buf[0] != '\n') {
-    
-    	log_info("%s", buf);
+    while (!(buf[0] == '\r' && buf[1] == '\n') && buf[0] != '\n')
+    {	
+    	/* lit chaque header */
+    	/* chaque header est composé d'un champ et d'un contenu séparé par ':' */
+    	field = strtok(buf, ":");
+    	content = strtok(NULL, ": ");
+    	
+    	if(!strcasecmp(field, "Accept"))
+    	{
+    		strncpy(request->accept, content, ACCEPT_MAX);
+    		log_info("Accept = %s", content);
+    	}
+    	else if(!strcasecmp(field, "Accept-Charset"))
+    	{
+    		strncpy(request->accept_charset, content, ACCEPT_CHARSET_MAX);
+    		log_info("Accept-charset = %s", content);
+    	}
+    	
         Rio_readlineb(&rio, buf, BUF_SIZE);
     }
 	
