@@ -63,9 +63,12 @@ static inline int worker_accept(int listenfd, SA *caddr, socklen_t* clen)
 
 static void signal_handler(int sig)
 {
-/*
-  May be useful later.
- */
+	if(sig == SIGCHLD)
+	{
+		pid_t pid;
+		while((pid = waitpid(-1, NULL, 0)) > 0)
+			log_debug("cgi pid = %i reaped", pid);
+	}
 }
 
 static void init_signals()
@@ -75,10 +78,12 @@ static void init_signals()
 	/* On masque tout les signaux sauf SIGTERM */
 	sigfillset(&set);
 	sigdelset(&set, SIGTERM);
+	sigdelset(&set, SIGCHLD);
 	sigprocmask(SIG_SETMASK, &set, NULL);
 
-	/* On lie notre signal handler à SIGTERM */
-	signal(SIGTERM,  signal_handler);
+	/* On lie notre signal handler aux signaux que l'on désire gérer */
+	signal(SIGTERM, signal_handler);
+	signal(SIGCHLD, signal_handler); 
 }
 
 static inline void worker_lock()
@@ -87,6 +92,7 @@ static inline void worker_lock()
 	
 	/* On masque tout les signaux */
 	sigfillset(&set);
+	sigdelset(&set, SIGCHLD);
 	sigprocmask(SIG_SETMASK, &set, NULL);
 }
 
@@ -97,6 +103,7 @@ static inline void worker_unlock()
 	/* On masque tout les signaux sauf SIGTERM */
 	sigfillset(&set);
 	sigdelset(&set, SIGTERM);
+	sigdelset(&set, SIGCHLD);
 	sigprocmask(SIG_SETMASK, &set, NULL);
 }
 

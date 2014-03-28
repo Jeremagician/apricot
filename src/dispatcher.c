@@ -15,15 +15,14 @@ appel à dispatch */
 static http_request_t request;
 static http_response_t response;
 
-static short is_dynamic(char* uri)
-{
-	return strstr(uri, "cgi-bin") != NULL;
-}
+int parse_uri(char *uri, char *filename, char *cgiargs);
 
 void dispatch(int acceptfd, SA *client_addr)
 {
 	int http_code;
-	(void)http_code; /* Temporary hack */
+    char filename[MAXLINE], cgiargs[MAXLINE];
+	int is_static;
+	struct stat fs;
 	
 	/* fill request and response with zeros */
 	bzero(&request, sizeof(request));
@@ -37,13 +36,55 @@ void dispatch(int acceptfd, SA *client_addr)
 	
 	rewrite(request.uri);
 
-	if(is_dynamic(request.uri))
-	{
-		http_clienterror(acceptfd, HTTP_NOT_IMPLEMENTED, "Not Implemented");
-		/* http_code = dynamic_serve(acceptfd, request.uri); */
+	is_static = parse_uri(request.uri, filename, cgiargs);
+
+	if (stat(filename, &fs) < 0) {
+		http_code = HTTP_NOT_FOUND;
 	}
 	else
 	{
-		http_code = static_serve(acceptfd, request.uri);
+		if(is_static)
+		{
+			if (!(S_ISREG(fs.st_mode)) || !(S_IRUSR & fs.st_mode))
+				http_code = HTTP_FORBIDDEN;
+			else
+				http_code = static_serve(acceptfd, request.uri);
+		}
+		else
+		{
+			if (!(S_ISREG(fs.st_mode)) || !(S_IXUSR & fs.st_mode))
+				http_code = HTTP_FORBIDDEN;
+			else
+				http_code = dynamic_serve(acceptfd, filename, cgiargs);
+		}
 	}
+	
+	if(http_code != HTTP_OK)
+		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));
+}
+
+int parse_uri(char *uri, char *filename, char *cgiargs)
+{
+    char *ptr;
+
+    if (!strstr(uri, "cgi-bin")) {  /* Static content */
+        strcpy(cgiargs, "");
+        strcpy(filename, ".");
+        strcat(filename, uri);
+        if (uri[strlen(uri)-1] == '/')
+            strcat(filename, "home.html");
+        return 1;
+    }
+    else {  /* Dynamic content */
+        ptr = index(uri, '?');
+        if (ptr) {
+            strcpy(cgiargs, ptr+1);
+            *ptr = '\0';
+        }
+        else
+            strcpy(cgiargs, "");
+        strcpy(filename, ".");
+        strcat(filename, uri);
+        return 0;
+    }
 }

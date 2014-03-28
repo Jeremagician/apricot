@@ -9,7 +9,7 @@ void http_clienterror(int fd, int errnum,
     char body1[MAXBUF], body2[MAXBUF];
 
     /* Build the HTTP response body */
-    snprintf(body1, sizeof(body1), "<html><title>Tiny Error</title>");
+    snprintf(body1, sizeof(body1), "<html><title>Apricot Error</title>");
     snprintf(body2, sizeof(body2), "%s<body bgcolor=""ffffff"">\r\n", body1);
     snprintf(body1, sizeof(body1), "%s<h1>Error %i</h1> \n%s\r\n", body2, errnum, shortmsg);
     snprintf(body2, sizeof(body2), "%s\r\n", body1);
