@@ -6,11 +6,14 @@
 #include <apricot/http_header.h>
 #include <strings.h>
 
+/* on met la structure qui représente le header d'une requete
+en global pour ne pas avoir à l'allouer sur la pile à chaque
+appel à dispatch */
+
 static http_request_t request;
 
 void dispatch(int acceptfd, SA *client_addr)
 {
-	char uri[MAXLINE];
 	int http_code;
 	(void)http_code; /* Temporary hack */
 	
@@ -18,16 +21,19 @@ void dispatch(int acceptfd, SA *client_addr)
 	bzero(&request, sizeof(request));
 	
 	/* read request */
-	http_request_read(acceptfd, &request);
+	int req_result = http_request_read(acceptfd, &request);
 	
-	rewrite(uri);
+	if(req_result == -1)
+		return;
+	
+	rewrite(request.uri);
 
 	if(0 /* if dynamic */)
 	{
-		http_code = dynamic_serve(acceptfd, uri);
+		http_code = dynamic_serve(acceptfd, request.uri);
 	}
 	else
 	{
-		http_code = static_serve(acceptfd, uri);
+		http_code = static_serve(acceptfd, request.uri);
 	}
 }

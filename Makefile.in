@@ -101,6 +101,7 @@ am_bin_apricot_OBJECTS = src/bin_apricot-conf.$(OBJEXT) \
 	src/bin_apricot-csapp.$(OBJEXT) \
 	src/bin_apricot-dispatcher.$(OBJEXT) \
 	src/bin_apricot-dynamic.$(OBJEXT) \
+	src/bin_apricot-http_error.$(OBJEXT) \
 	src/bin_apricot-http_header.$(OBJEXT) \
 	src/bin_apricot-log.$(OBJEXT) src/bin_apricot-main.$(OBJEXT) \
 	src/bin_apricot-master.$(OBJEXT) \
@@ -312,7 +313,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_apricot_SOURCES = src/conf.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_header.c src/include/apricot/conf.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/master.h src/include/apricot/pool.h src/include/apricot/rewrite.h src/include/apricot/static.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/pool.c src/rewrite.c src/static.c src/worker.c 
+bin_apricot_SOURCES = src/conf.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_error.c src/http_header.c src/include/apricot/conf.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_error.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/master.h src/include/apricot/pool.h src/include/apricot/rewrite.h src/include/apricot/static.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/pool.c src/rewrite.c src/static.c src/worker.c 
 bin_apricot_LDFLAGS = -lpthread
 bin_apricot_CFLAGS = -Wall -Werror -Isrc/include
 apricotconfdir = $(sysconfdir)/apricot
@@ -432,6 +433,8 @@ src/bin_apricot-dispatcher.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-dynamic.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/bin_apricot-http_error.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-http_header.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-log.$(OBJEXT): src/$(am__dirstamp) \
@@ -487,6 +490,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-csapp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-dispatcher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-dynamic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-http_error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-http_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-main.Po@am__quote@
@@ -567,6 +571,20 @@ src/bin_apricot-dynamic.obj: src/dynamic.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/dynamic.c' object='src/bin_apricot-dynamic.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-dynamic.obj `if test -f 'src/dynamic.c'; then $(CYGPATH_W) 'src/dynamic.c'; else $(CYGPATH_W) '$(srcdir)/src/dynamic.c'; fi`
+
+src/bin_apricot-http_error.o: src/http_error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-http_error.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-http_error.Tpo -c -o src/bin_apricot-http_error.o `test -f 'src/http_error.c' || echo '$(srcdir)/'`src/http_error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-http_error.Tpo src/$(DEPDIR)/bin_apricot-http_error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/http_error.c' object='src/bin_apricot-http_error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-http_error.o `test -f 'src/http_error.c' || echo '$(srcdir)/'`src/http_error.c
+
+src/bin_apricot-http_error.obj: src/http_error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-http_error.obj -MD -MP -MF src/$(DEPDIR)/bin_apricot-http_error.Tpo -c -o src/bin_apricot-http_error.obj `if test -f 'src/http_error.c'; then $(CYGPATH_W) 'src/http_error.c'; else $(CYGPATH_W) '$(srcdir)/src/http_error.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-http_error.Tpo src/$(DEPDIR)/bin_apricot-http_error.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/http_error.c' object='src/bin_apricot-http_error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-http_error.obj `if test -f 'src/http_error.c'; then $(CYGPATH_W) 'src/http_error.c'; else $(CYGPATH_W) '$(srcdir)/src/http_error.c'; fi`
 
 src/bin_apricot-http_header.o: src/http_header.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-http_header.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-http_header.Tpo -c -o src/bin_apricot-http_header.o `test -f 'src/http_header.c' || echo '$(srcdir)/'`src/http_header.c
