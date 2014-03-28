@@ -4,5 +4,5 @@
 
 int dynamic_serve(int clientfd, char * uri)
 {
-	return HTTP_OK;
+  	return HTTP_OK;
 }

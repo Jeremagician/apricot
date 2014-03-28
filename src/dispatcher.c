@@ -4,6 +4,8 @@
 #include <apricot/static.h>
 #include <apricot/csapp.h>
 #include <apricot/http_header.h>
+#include <apricot/http_error.h>
+#include <apricot/http_codes.h>
 #include <strings.h>
 
 /* on met la structure qui représente le header d'une requete
@@ -11,6 +13,11 @@ en global pour ne pas avoir à l'allouer sur la pile à chaque
 appel à dispatch */
 
 static http_request_t request;
+
+static short is_dynamic(char* uri)
+{
+	return strstr(uri, "cgi-bin") != NULL;
+}
 
 void dispatch(int acceptfd, SA *client_addr)
 {
@@ -28,9 +35,10 @@ void dispatch(int acceptfd, SA *client_addr)
 	
 	rewrite(request.uri);
 
-	if(0 /* if dynamic */)
+	if(is_dynamic(request.uri))
 	{
-		http_code = dynamic_serve(acceptfd, request.uri);
+		http_clienterror(acceptfd, HTTP_NOT_IMPLEMENTED, "Not Implemented");
+		/* http_code = dynamic_serve(acceptfd, request.uri); */
 	}
 	else
 	{
