@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define POOL_SIZE 16
+
 /* Prototypes */
 static void signal_handler(int sig);
 static void init_signals();
@@ -16,7 +18,7 @@ char ** arguments;
 void master_start(int port, char ** argv)
 {
 	int listenfd;
-	
+
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
 
@@ -25,7 +27,7 @@ void master_start(int port, char ** argv)
 	/* init signals */
 	init_signals();
 
-	pool_create(listenfd);
+	pool_create(listenfd, POOL_SIZE);
 
 	log_info("Apricot web server started on port %i", port);
 

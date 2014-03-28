@@ -70,15 +70,13 @@ static void vlog(char * tag, char * message, va_list ap)
 	char buf_time[255];
 
 	time(&now);
-	strftime(buf_time, 255, "%Y-%m-%d %02k:%02M", localtime(&now));
+	strftime(buf_time, 255, "%Y-%m-%d %02k:%02M:%02S", localtime(&now));
 
 	fprintf(log_file, "[%s] %s : ", buf_time, tag);
 	vfprintf(log_file, message, ap);
 	fprintf(log_file, "\n");
-	
+
 	/* nécessaire pour que les logs soient envoyés en continu dans le
 	fichier quand on est un daemon */
 	fflush(log_file);
 }
-
-
