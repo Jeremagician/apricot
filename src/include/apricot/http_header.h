@@ -10,6 +10,7 @@
 #define ACCEPT_LANGUAGE_MAX 80
 #define ACCEPT_RANGES_MAX 80
 #define AUTHORIZATION_MAX 80
+#define CACHE_CONTROL_MAX 255
 #define ETAG_MAX 80
 #define EXPECTATION_MAX 80
 #define FROM_MAX 80
@@ -52,8 +53,7 @@ typedef struct {
 	char user_agent[USER_AGENT_MAX];
 	
 	/* Generic headers */
-	int cache_control;
-	int cache_seconds;
+	char cache_control[CACHE_CONTROL_MAX];
 	char connection[CONNECTION_MAX];
 	char date[DATE_MAX];
 	char pragma[PRAGMA_MAX];
@@ -121,5 +121,38 @@ enum{REQUEST_NO_CACHE,
 /* fills the request header according to the data read on fd */
 	
 int http_request_read(int fd, http_request_t * request);
+
+/* request headers fields names hash values according to djb2 function
+ * defined in utils.c */
+
+#define HASH_ACCEPT 864
+#define HASH_ACCEPT_CHARSET 839
+#define HASH_ACCEPT_ENCODING 436
+#define HASH_ACCEPT_LANGUAGE 81
+#define HASH_AUTHORIZATION 737
+#define HASH_EXCEPT 777
+#define HASH_FROM 492
+#define HASH_HOST 238
+#define HASH_IF_MATCH 473
+#define HASH_IF_MODIFIED_SINCE 220
+#define HASH_IF_NONE_MATCH 78
+#define HASH_IF_RANGE 673
+#define HASH_UNMODIFIED_SINCE 919
+#define HASH_MAX_FORWARDS 635
+#define HASH_PROXY_AUTHORIZATION 626
+#define HASH_RANGE 173
+#define HASH_REFERER 971
+#define HASH_TE 929
+#define HASH_USER_AGENT 219
+#define HASH_CACHE_CONTROL 474
+#define HASH_CONNECTION 512
+#define HASH_DATE 262
+#define HASH_PRAGMA 464
+#define HASH_TRAILER 627
+#define HASH_TRANSFER_ENCODING 169
+#define HASH_UPGRADE 448
+#define HASH_VIA 64
+#define HASH_WARNING 918
+
 
 #endif

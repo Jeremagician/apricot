@@ -28,7 +28,9 @@ void dispatch(int acceptfd, SA *client_addr)
 	bzero(&request, sizeof(request));
 	bzero(&response, sizeof(response));
 	
-	/* read request */
+	/* read request, exit if something goes wrong during
+	 request reading, error messages have been already sent
+	 if any. */
 	int req_result = http_request_read(acceptfd, &request);
 	
 	if(req_result == -1)
