@@ -40,6 +40,8 @@ void dispatch(int acceptfd, SA *client_addr)
 
 	is_static = parse_uri(request.uri, filename, cgiargs);
 
+	printf("%s\n", filename);
+	
 	if (stat(filename, &fs) < 0) {
 		http_code = HTTP_NOT_FOUND;
 	}
