@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #define APRICOT_VERSION 0.1
 #define DEFAULT_DAEMON_LOGFILE "/tmp/apricot.log"
@@ -22,6 +23,13 @@ int main(int argc, char ** argv)
 	int daemon = 0;
 	FILE * log_file;
 	char * user_supplied_conf_filename = NULL;
+	
+	/* check that apricot is not already running */
+	if(open(LOCK_FILE, O_CREAT | O_EXCL) < 0)
+	{
+		fprintf(stderr, "Apricot is already running.\n");
+		exit(EXIT_FAILURE);
+	}
     
     while((opt = getopt(argc, argv, "dp:vhc:")) != -1)
 	{
@@ -125,9 +133,6 @@ void print_help()
 
 void daemonize()
 {
-	/* On verifie que l'on a pas déja une instance démarrée */
-	
-
 	pid_t pid = fork();
 		
 	if(pid == -1)

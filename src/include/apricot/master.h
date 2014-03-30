@@ -1,6 +1,8 @@
 #ifndef _MASTER_
 #define _MASTER_
 
+#define LOCK_FILE "/tmp/.apricot.lock"
+
 void master_start(int port, char ** argv);
 void master_stop();
 
