@@ -1,6 +1,9 @@
 #ifndef _HTTP_HEADER_
 #define _HTTP_HEADER_
 
+#include <time.h>
+#include <netinet/in.h>
+
 #define URI_MAX 8096
 #define METHOD_MAX 25
 #define HOST_MAX 255
@@ -11,6 +14,11 @@
 #define ACCEPT_RANGES_MAX 80
 #define AUTHORIZATION_MAX 80
 #define CACHE_CONTROL_MAX 255
+#define CONTENT_ENCODING_MAX 25
+#define CONTENT_LANGUAGE_MAX 80
+#define CONTENT_MD5_MAX 255
+#define CONTENT_RANGE_MAX 80
+#define CONTENT_TYPE_MAX 80
 #define ETAG_MAX 80
 #define EXPECTATION_MAX 80
 #define FROM_MAX 80
@@ -33,6 +41,9 @@
 from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
 
 typedef struct {
+	/* client address */
+	struct sockaddr_in client_address;
+  
 	/* Request line */
 	int method;
 	int http_version_major;
@@ -55,12 +66,24 @@ typedef struct {
 	/* General headers */
 	char cache_control[CACHE_CONTROL_MAX];
 	char connection[CONNECTION_MAX];
-	char date[DATE_MAX];
+	struct tm date;
 	char pragma[PRAGMA_MAX];
 	char trailer[TRAILER_MAX];
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
+	
+	/* entity headers */
+	int allow;
+	char content_encoding[CONTENT_ENCODING_MAX];
+	char content_language[CONTENT_LANGUAGE_MAX];
+	int content_length;
+	char content_location[URI_MAX];
+	char content_md5[CONTENT_MD5_MAX];
+	char content_range[CONTENT_RANGE_MAX];
+	char content_type[CONTENT_TYPE_MAX];
+	struct tm expires;
+	struct tm last_modified;
 
 } http_request_t;
 
@@ -85,12 +108,24 @@ typedef struct {
 	/* General headers */
 	char cache_control[CACHE_CONTROL_MAX];
 	char connection[CONNECTION_MAX];
-	char date[DATE_MAX];
+	struct tm date;
 	char pragma[PRAGMA_MAX];
 	char trailer[TRAILER_MAX];
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
+	
+	/* entity headers */
+	int allow;
+	char content_encoding[CONTENT_ENCODING_MAX];
+	char content_language[CONTENT_LANGUAGE_MAX];
+	int content_length;
+	char content_location[URI_MAX];
+	char content_md5[CONTENT_MD5_MAX];
+	char content_range[CONTENT_RANGE_MAX];
+	char content_type[CONTENT_TYPE_MAX];
+	struct tm expires;
+	struct tm last_modified;
 
 } http_response_t;
 
@@ -116,6 +151,12 @@ enum{REQUEST_NO_CACHE,
 	REQUEST_ONLY_IF_CACHED,
 	REQUEST_CACHE_EXTENSION
 	};
+	
+/* allow */
+enum{	ALLOW_GET,
+	ALLOW_HEAD,
+	ALLOW_PUT
+    };
 
 /* fills the request header according to the data read on fd */
 
@@ -152,6 +193,16 @@ int http_request_read(int fd, http_request_t * request);
 #define HASH_UPGRADE 448
 #define HASH_VIA 64
 #define HASH_WARNING 918
+#define HASH_ALLOW 927
+#define HASH_CONTENT_ENCODING 295
+#define HASH_CONTENT_LANGUAGE 236
+#define HASH_CONTENT_LENGTH 714
+#define HASH_CONTENT_LOCATION 817
+#define HASH_CONTENT_MD5 22
+#define HASH_CONTENT_RANGE 669
+#define HASH_CONTENT_TYPE 210
+#define HASH_EXPIRES 984
+#define HASH_LAST_MODIFIED 634
 
 
 #endif

@@ -46,6 +46,16 @@ int main()
 	printf("#define HASH_UPGRADE %i\n", hash("upgrade")%1000);
 	printf("#define HASH_VIA %i\n", hash("via")%1000);
 	printf("#define HASH_WARNING %i\n", hash("warning")%1000);
-
+	printf("#define HASH_ALLOW %i\n", hash("allow")%1000);
+	printf("#define HASH_CONTENT_ENCODING %i\n", hash("content-encoding")%1000);
+	printf("#define HASH_CONTENT_LANGUAGE %i\n", hash("content-language")%1000);
+	printf("#define HASH_CONTENT_LENGTH %i\n", hash("content-length")%1000);
+	printf("#define HASH_CONTENT_LOCATION %i\n", hash("content-location")%1000);
+	printf("#define HASH_CONTENT_MD5 %i\n", hash("content-md5")%1000);
+	printf("#define HASH_CONTENT_RANGE %i\n", hash("content-range")%1000);
+	printf("#define HASH_CONTENT_TYPE %i\n", hash("content-type")%1000);
+	printf("#define HASH_EXPIRES %i\n", hash("expires")%1000);
+	printf("#define HASH_LAST_MODIFIED %i\n", hash("last-modified")%1000);
+	
 	return 0;
 }

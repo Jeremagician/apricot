@@ -7,6 +7,8 @@
 #include <apricot/http_error.h>
 #include <apricot/http_codes.h>
 #include <apricot/conf.h>
+#include <apricot/utils.h>
+#include <apricot/log.h>
 #include <strings.h>
 
 /* on met la structure qui représente le header d'une requete
@@ -65,6 +67,15 @@ void dispatch(int acceptfd, SA *client_addr)
 				http_code = dynamic_serve(acceptfd, filename, cgiargs);
 		}
 	}
+	
+	log_info("GET %s HTTP %i.%i %s %s %i", 
+			  request.uri, 
+			  request.http_version_major, 
+			  request.http_version_minor, 
+			  straddr(request.client_address),
+			  get_client_hostname(acceptfd),
+			  http_code
+			);
 
 	if(http_code != HTTP_OK)
 		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));

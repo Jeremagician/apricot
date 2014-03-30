@@ -1,11 +1,16 @@
+#define _XOPEN_SOURCE
 #include <apricot/http_header.h>
 #include <apricot/csapp.h>
 #include <apricot/http_codes.h>
 #include <apricot/http_error.h>
 #include <apricot/log.h>
 #include <apricot/utils.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #define BUF_SIZE METHOD_MAX + URI_MAX + 10
 #define TABLE_SIZE 1000
@@ -48,6 +53,16 @@ int http_request_read(int fd, http_request_t * request)
 		[HASH_UPGRADE] = &&upgrade,
 		[HASH_VIA] = &&via,
 		[HASH_WARNING] = &&warning,
+		[HASH_ALLOW] = &&allow,
+		[HASH_CONTENT_ENCODING] = &&content_encoding,
+		[HASH_CONTENT_LANGUAGE] = &&content_language,
+		[HASH_CONTENT_LENGTH] = &&content_length,
+		[HASH_CONTENT_LOCATION] = &&content_location,
+		[HASH_CONTENT_MD5] = &&content_md5,
+		[HASH_CONTENT_RANGE] = &&content_range,
+		[HASH_CONTENT_TYPE] = &&content_type,
+		[HASH_EXPIRES] = &&expires,
+		[HASH_LAST_MODIFIED] = &&last_modified,
 		&&not_supported
 	};
 	
@@ -79,7 +94,8 @@ int http_request_read(int fd, http_request_t * request)
 		return -1;
 	}
 	
-	log_info("GET %s HTTP/%i.%i", request->uri, request->http_version_major, request->http_version_minor);
+	/* read client IP address */
+	request->client_address = getclientaddr(fd);
 	
 	/* read other headers */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
@@ -123,9 +139,56 @@ int http_request_read(int fd, http_request_t * request)
 		accept_language :
 			strncpy(request->accept_language, content, ACCEPT_LANGUAGE_MAX);
 			goto fetch;
+			
+		allow :
+			if(!strcasecmp(content, "GET"))
+			{
+			  request->allow = ALLOW_GET;
+			}
+			else if(!strcasecmp(content, "HEAD"))
+			{
+			  request->allow = ALLOW_HEAD;
+			}
+			else if(!strcasecmp(content, "PUT"))
+			{
+			  request->allow = ALLOW_PUT;
+			}
+			goto fetch;
 		
 		authorization :
 			strncpy(request->authorization,  content, AUTHORIZATION_MAX);
+			goto fetch;
+			
+		content_encoding :
+			strncpy(request->content_encoding, content, CONTENT_ENCODING_MAX);
+			goto fetch;
+			
+		content_language :
+			strncpy(request->content_language, content, CONTENT_LANGUAGE_MAX);
+			goto fetch;
+		
+		content_length :
+			request->content_length = atoi(content);
+			goto fetch;
+			
+		content_location :
+			strncpy(request->content_location, content, URI_MAX);
+			goto fetch;
+			
+		content_md5 :
+			strncpy(request->content_md5, content, CONTENT_MD5_MAX);
+			goto fetch;
+			
+		content_range :
+			strncpy(request->content_range, content, CONTENT_RANGE_MAX);
+			goto fetch;
+			
+		content_type :
+			strncpy(request->content_type, content, CONTENT_TYPE_MAX);
+			goto fetch;
+			
+		expires :
+			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->expires);
 			goto fetch;
 			
 		expect :
@@ -161,7 +224,7 @@ int http_request_read(int fd, http_request_t * request)
 			goto fetch;
 			
 		date :
-			strncpy(request->date, content, DATE_MAX);
+			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->date);
 			goto fetch;
 			
 		pragma :
@@ -184,6 +247,10 @@ int http_request_read(int fd, http_request_t * request)
 			sscanf(content, "%3i", &request->warn_code);
 			goto fetch;
 			
+		last_modified :
+			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->last_modified);
+			goto fetch;
+			
 		not_supported :
 			log_info("Request header field %s not supported", field);
 			goto fetch;
@@ -192,6 +259,16 @@ int http_request_read(int fd, http_request_t * request)
     	
         Rio_readlineb(&rio, buf, BUF_SIZE);
     }
+    
+    /* checks that a host header has been given 
+	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23
+	 */
+	
+    if(!*request->host)
+	{
+		http_clienterror(fd, HTTP_BAD_REQUEST, "No Host header");
+		return -1;
+	}
 	
 	return 0;
 }

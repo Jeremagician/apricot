@@ -13,4 +13,16 @@ uint32_t hash (char * str);
 
 void strlower(char * str);
 
+/* get address of client */
+
+struct sockaddr_in getclientaddr(int fd);
+
+/* converts an address to string */
+
+char * straddr(struct sockaddr_in addr);
+
+/* get client host name */
+
+char * get_client_hostname(int fd);
+
 #endif
