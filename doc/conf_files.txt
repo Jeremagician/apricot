@@ -7,3 +7,4 @@ at server startup. There is one option per line and each line is like :
 Available options :
 
 	port port_number (required)
+	root directory	(required) the root directory for web pages

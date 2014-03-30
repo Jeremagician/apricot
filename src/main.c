@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
 		car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
 		sa configuration.
 	*/
-	conf_t conf = conf_read(user_supplied_conf_filename);
+	conf_read(user_supplied_conf_filename);
 	
 	if(daemon)
 	{

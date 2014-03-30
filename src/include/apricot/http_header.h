@@ -83,8 +83,7 @@ typedef struct {
 	char www_authenticate[WWW_AUTH_MAX];
 
 	/* General headers */
-	int cache_control;
-	int cache_seconds;
+	char cache_control[CACHE_CONTROL_MAX];
 	char connection[CONNECTION_MAX];
 	char date[DATE_MAX];
 	char pragma[PRAGMA_MAX];

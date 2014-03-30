@@ -6,6 +6,7 @@
 #include <apricot/http_header.h>
 #include <apricot/http_error.h>
 #include <apricot/http_codes.h>
+#include <apricot/conf.h>
 #include <strings.h>
 
 /* on met la structure qui représente le header d'une requete
@@ -15,7 +16,7 @@ appel à dispatch */
 static http_request_t request;
 static http_response_t response;
 
-int parse_uri(char *uri, char *filename, char *cgiargs);
+static int parse_uri(char *uri, char *filename, char *cgiargs);
 
 void dispatch(int acceptfd, SA *client_addr)
 {
@@ -44,8 +45,6 @@ void dispatch(int acceptfd, SA *client_addr)
 	 */
 	is_static = parse_uri(request.uri, filename, cgiargs);
 
-	printf("%s\n", filename);
-
 	if (stat(filename, &fs) < 0) {
 		http_code = HTTP_NOT_FOUND;
 	}
@@ -71,13 +70,13 @@ void dispatch(int acceptfd, SA *client_addr)
 		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));
 }
 
-int parse_uri(char *uri, char *filename, char *cgiargs)
+static int parse_uri(char *uri, char *filename, char *cgiargs)
 {
     char *ptr;
 
     if (!strstr(uri, "cgi-bin")) {  /* Static content */
         strcpy(cgiargs, "");
-        strcpy(filename, ".");
+        strcpy(filename, conf.root);
         strcat(filename, uri);
         if (uri[strlen(uri)-1] == '/')
             strcat(filename, "home.html");
@@ -91,7 +90,8 @@ int parse_uri(char *uri, char *filename, char *cgiargs)
         }
         else
             strcpy(cgiargs, "");
-        strcpy(filename, ".");
+        strcpy(filename, conf.root);
+		strcat(filename, "/");
         strcat(filename, uri);
         return 0;
     }

@@ -1,6 +1,6 @@
  #!/bin/sh
 
-echo -n 'bin_PROGRAMS = bin/apricot bin/cgi-bin/adder' > Makefile.am
+echo -n 'bin_PROGRAMS = bin/apricot bin/sites/cgi-bin/adder' > Makefile.am
 
 echo ' ' >> Makefile.am
 echo -n 'bin_apricot_SOURCES = ' >> Makefile.am
@@ -19,8 +19,8 @@ apricotconf_DATA = bin/apricot.conf
 
 EXTRA_DIST = bin/apricot.conf
 
-bin_cgi_bin_adder_SOURCES = cgi-bin/adder.c cgi-bin/csapp.c cgi-bin/csapp.h
-bin_cgi_bin_adder_LDFLAGS = -lpthread
+bin_sites_cgi_bin_adder_SOURCES = cgi-bin/adder.c cgi-bin/csapp.c cgi-bin/csapp.h
+bin_sites_cgi_bin_adder_LDFLAGS = -lpthread
 
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = subdir-objects
