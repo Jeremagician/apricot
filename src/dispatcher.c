@@ -23,25 +23,29 @@ void dispatch(int acceptfd, SA *client_addr)
     char filename[MAXLINE], cgiargs[MAXLINE];
 	int is_static;
 	struct stat fs;
-	
+
 	/* fill request and response with zeros */
 	bzero(&request, sizeof(request));
 	bzero(&response, sizeof(response));
-	
+
 	/* read request, exit if something goes wrong during
 	 request reading, error messages have been already sent
 	 if any. */
 	int req_result = http_request_read(acceptfd, &request);
-	
+
 	if(req_result == -1)
 		return;
-	
+
 	rewrite(request.uri);
 
+	/*
+	  On parse l'uri pour déterminer quel document le client
+	  souhaite obtenir, ainsi que les arguments cgi si il le faut
+	 */
 	is_static = parse_uri(request.uri, filename, cgiargs);
 
 	printf("%s\n", filename);
-	
+
 	if (stat(filename, &fs) < 0) {
 		http_code = HTTP_NOT_FOUND;
 	}
@@ -62,7 +66,7 @@ void dispatch(int acceptfd, SA *client_addr)
 				http_code = dynamic_serve(acceptfd, filename, cgiargs);
 		}
 	}
-	
+
 	if(http_code != HTTP_OK)
 		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));
 }

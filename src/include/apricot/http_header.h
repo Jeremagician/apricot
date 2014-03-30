@@ -38,7 +38,7 @@ typedef struct {
 	int http_version_major;
 	int http_version_minor;
 	char uri[URI_MAX];
-	
+
 	/* Request headers */
 	char accept[ACCEPT_MAX];
 	char accept_charset[ACCEPT_CHARSET_MAX];
@@ -51,8 +51,8 @@ typedef struct {
 	char referer[URI_MAX];
 	char transfer_encoding[TE_MAX];
 	char user_agent[USER_AGENT_MAX];
-	
-	/* Generic headers */
+
+	/* General headers */
 	char cache_control[CACHE_CONTROL_MAX];
 	char connection[CONNECTION_MAX];
 	char date[DATE_MAX];
@@ -61,7 +61,7 @@ typedef struct {
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
-	
+
 } http_request_t;
 
 typedef struct {
@@ -70,7 +70,7 @@ typedef struct {
 	int http_version_minor;
 	int status_code;
 	char reason_phrase[REASON_PHRASE_MAX];
-	
+
 	/* Response headers */
 	char accept_ranges[ACCEPT_RANGES_MAX];
 	int age;
@@ -81,8 +81,8 @@ typedef struct {
 	char server[SERVER_MAX];
 	char vary[VARY_MAX];
 	char www_authenticate[WWW_AUTH_MAX];
-	
-	/* Generic headers */
+
+	/* General headers */
 	int cache_control;
 	int cache_seconds;
 	char connection[CONNECTION_MAX];
@@ -92,7 +92,7 @@ typedef struct {
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
-	
+
 } http_response_t;
 
 /* methods */
@@ -105,7 +105,7 @@ enum{HTTP_METHOD_OPTIONS,
 	HTTP_METHOD_DELETE,
 	HTTP_METHOD_TRACE,
 	HTTP_METHOD_CONNECT};
-	
+
 /* cache directives */
 
 enum{REQUEST_NO_CACHE,
@@ -117,9 +117,9 @@ enum{REQUEST_NO_CACHE,
 	REQUEST_ONLY_IF_CACHED,
 	REQUEST_CACHE_EXTENSION
 	};
-	
+
 /* fills the request header according to the data read on fd */
-	
+
 int http_request_read(int fd, http_request_t * request);
 
 /* request headers fields names hash values according to djb2 function

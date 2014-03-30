@@ -1,7 +1,7 @@
  #!/bin/sh
 
 echo -n 'bin_PROGRAMS = bin/apricot bin/cgi-bin/adder' > Makefile.am
- 
+
 echo ' ' >> Makefile.am
 echo -n 'bin_apricot_SOURCES = ' >> Makefile.am
 

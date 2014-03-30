@@ -1,104 +1,111 @@
 #ifndef _HTTP_CODES_
 #define _HTTP_CODES_
 
-// HTTP error codes
+/*
+  Definition des codes de status http
+  http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1
+ */
 
-#define HTTP_ERROR_UNKNOWN		99 // ?
-#define HTTP_ERROR_DNS			98 // DNS lookup failed
-#define HTTP_ERROR_CONNECT		97 // Connect failed
-#define HTTP_ERROR_DISCONNECTED	96 // Disconnected during request
-#define HTTP_ERROR_TIMEOUT		95 // Timeout in network i/o
-#define HTTP_ERROR_PROTOCOL		94 // Unexpected response
-#define HTTP_ERROR_SLOW			93 // Too slow
-#define HTTP_ERROR_SKIPPED		92 // Skipped because of other pages failing
-#define HTTP_ERROR_REQUESTING   91 // Failed to write request
-#define HTTP_ERROR_BLOCKED_IP   90 // IP is considered blocked
+/*
+  1xx: Informational - Request received, continuing process
+ */
+#define HTTP_CONTINUE 100
+#define HTTP_SWITCHING_PROTOCOLS 101
 
-// HTTP internal status codes
-// Valid while making a request
+/*
+  2xx: Success - The action was successfully received,
+  understood, and accepted
+ */
+#define HTTP_OK 200
+#define HTTP_CREATED 201
+#define HTTP_ACCEPTED 202
+#define HTTP_NO_CONTENT 204
+#define HTTP_PARTIAL 206
+#define HTTP_RESET_CONTENT 205
+#define HTTP_PARTIAL_CONTENT 206
 
-#define HTTP_STATUS_UNDEFINED	0
-#define HTTP_STATUS_RESOLVED    1
-#define HTTP_STATUS_CONNECTED	2
-#define HTTP_STATUS_REQUESTED   3
-
-// HTTP normal codes
-
-#define HTTP_OK				200
-#define HTTP_NO_CONTENT		204
-#define HTTP_PARTIAL		206
-#define HTTP_MULTIPLE_CHOICES	300
-#define HTTP_MOVED			301
-#define HTTP_FOUND			302
-#define HTTP_SEE_OTHER		303
-#define HTTP_NOT_MODIFIED	304
+/*
+  3xx: Redirection - Further action must be taken in order to
+  complete the request
+ */
+#define HTTP_MULTIPLE_CHOICES 300
+#define HTTP_MOVED 301
+#define HTTP_FOUND 302
+#define HTTP_SEE_OTHER 303
+#define HTTP_NOT_MODIFIED 304
+#define HTTP_USE_PROXY 305
 #define HTTP_TEMPORARY_REDIRECT	307
-#define HTTP_BAD_REQUEST	400
-#define HTTP_UNAUTHORIZED   401
-#define HTTP_PAYMENT_REQUIRED	402
-#define HTTP_FORBIDDEN		403
-#define HTTP_NOT_FOUND		404
-#define HTTP_METHOD_NOT_ALLOWED		405
-#define HTTP_NOT_ACCEPTABLE 406
-#define HTTP_REQUEST_TIMEOUT	408
-#define HTTP_URI_TOO_LONG	414
-#define HTTP_UNSUPPORTED_MEDIA_TYPE	415
-#define HTTP_RANGE_ERROR	416
-#define HTTP_INTERNAL_ERROR	500
-#define HTTP_NOT_IMPLEMENTED	501
-#define HTTP_BAD_GATEWAY	502
-#define HTTP_UNAVAILABLE		503
-#define HTTP_GATEWAY_TIMEOUT	504
-#define HTTP_INSUFFICIENT_STORAGE	507
 
+/*
+  4xx: Client Error - The request contains bad syntax or cannot
+  be fulfilled
+ */
+#define HTTP_BAD_REQUEST 400
+#define HTTP_UNAUTHORIZED 401
+#define HTTP_PAYMENT_REQUIRED 402
+#define HTTP_FORBIDDEN 403
+#define HTTP_NOT_FOUND 404
+#define HTTP_METHOD_NOT_ALLOWED 405
+#define HTTP_NOT_ACCEPTABLE 406
+#define HTTP_REQUEST_TIMEOUT 408
+#define HTTP_URI_TOO_LONG 414
+#define HTTP_UNSUPPORTED_MEDIA_TYPE	415
+#define HTTP_RANGE_ERROR 416
+
+/*
+  Server Error - The server failed to fulfill an apparently
+  valid request
+ */
+#define HTTP_INTERNAL_ERROR	500
+#define HTTP_NOT_IMPLEMENTED 501
+#define HTTP_BAD_GATEWAY 502
+#define HTTP_UNAVAILABLE 503
+#define HTTP_GATEWAY_TIMEOUT 504
+#define HTTP_VERSION_NOT_SUPPORTED 505
+
+/*
+  Macro permettant d'obtenir la "Reason Phrase" selon le status code HTTP
+ */
 #define HTTP_STR(x) (\
-	(x==HTTP_STATUS_UNDEFINED)	? "HTTP_UNDEF" :\
-	(x==HTTP_ERROR_UNKNOWN)		? "HTTP_ERROR_UNKNOWN" :\
-	(x==HTTP_ERROR_DNS)			? "HTTP_ERROR_DNS" :\
-	(x==HTTP_ERROR_CONNECT)		? "HTTP_ERROR_CONNECT" :\
-	(x==HTTP_ERROR_DISCONNECTED)? "HTTP_ERROR_DISCONNECTED" :\
-	(x==HTTP_ERROR_TIMEOUT)		? "HTTP_ERROR_TIMEOUT" :\
-	(x==HTTP_ERROR_PROTOCOL)	? "HTTP_ERROR_PROTOCOL" :\
-	(x==HTTP_ERROR_SLOW)		? "HTTP_ERROR_SLOW" :\
-	(x==HTTP_ERROR_SKIPPED)		? "HTTP_ERROR_SKIPPED" :\
-	(x==HTTP_ERROR_REQUESTING)	? "HTTP_ERROR_REQUESTING" :\
-	(x==HTTP_ERROR_BLOCKED_IP)	? "HTTP_ERROR_BLOCKED_IP" :\
-	(x==HTTP_OK)				? "HTTP_OK" :\
-	(x==HTTP_NO_CONTENT)		? "HTTP_NO_CONTENT" :\
-	(x==HTTP_PARTIAL)			? "HTTP_PARTIAL" :\
-	(x==HTTP_MULTIPLE_CHOICES)	? "HTTP_MULTIPLE_CHOICES" :\
-	(x==HTTP_MOVED)				? "HTTP_MOVED" :\
-	(x==HTTP_FOUND)				? "HTTP_FOUND" :\
-	(x==HTTP_METHOD_NOT_ALLOWED)				? "HTTP_METHOD_NOT_ALLOWED" :\
-	(x==HTTP_SEE_OTHER)			? "HTTP_SEE_OTHER" :\
-	(x==HTTP_NOT_MODIFIED)		? "HTTP_NOT_MODIFIED" :\
-	(x==HTTP_TEMPORARY_REDIRECT)		? "HTTP_TEMPORARY_REDIRECT" :\
-	(x==HTTP_BAD_REQUEST)		? "HTTP_BAD_REQUEST" :\
-	(x==HTTP_UNAUTHORIZED)		? "HTTP_UNAUTHORIZED" :\
-	(x==HTTP_PAYMENT_REQUIRED)	? "HTTP_PAYMENT_REQUIRED" :\
-	(x==HTTP_FORBIDDEN)			? "HTTP_FORBIDDEN" :\
-	(x==HTTP_NOT_FOUND)			? "HTTP_NOT_FOUND" :\
-	(x==HTTP_NOT_ACCEPTABLE)	? "HTTP_NOT_ACCEPTABLE" :\
-	(x==HTTP_REQUEST_TIMEOUT)	? "HTTP_REQUEST_TIMEOUT" :\
-	(x==HTTP_URI_TOO_LONG)		? "HTTP_URI_TOO_LONG" :\
-	(x==HTTP_UNSUPPORTED_MEDIA_TYPE)		? "HTTP_UNSUPPORTED_MEDIA_TYPE" :\
-	(x==HTTP_RANGE_ERROR)		? "HTTP_RANGE_ERROR" :\
-	(x==HTTP_INTERNAL_ERROR)	? "HTTP_INTERNAL_ERROR" :\
-	(x==HTTP_NOT_IMPLEMENTED)	? "HTTP_NOT_IMPLEMENTED" :\
-	(x==HTTP_BAD_GATEWAY)		? "HTTP_BAD_GATEWAY" :\
-	(x==HTTP_UNAVAILABLE)		? "HTTP_UNAVAILABLE" :\
-	(x==HTTP_GATEWAY_TIMEOUT)	? "HTTP_GATEWAY_TIMEOUT" :\
-	(x==HTTP_INSUFFICIENT_STORAGE)	? "HTTP_INSUFFICIENT_STORAGE" :\
+    (x==HTTP_CONTINUE)				 ? "Continue" :\
+	(x==HTTP_SWITCHING_PROTOCOLS)    ? "Switching Protocols" :\
+	(x==HTTP_OK)				     ? "OK" :\
+    (x==HTTP_CREATED)				 ? "Created" :\
+	(x==HTTP_ACCEPTED)				 ? "Accepted" :\
+	(x==HTTP_NO_CONTENT)		     ? "No Content" :\
+	(x==HTTP_PARTIAL)			     ? "Partial Content" :\
+	(x==HTTP_MULTIPLE_CHOICES)	     ? "Multiple Choices" :\
+	(x==HTTP_MOVED)				     ? "Moved Permanently" :\
+	(x==HTTP_FOUND)				     ? "Found" :\
+	(x==HTTP_METHOD_NOT_ALLOWED)     ? "Method Not Allowed" : \
+	(x==HTTP_SEE_OTHER)			     ? "See Other" :\
+	(x==HTTP_NOT_MODIFIED)		     ? "Not Modified" :\
+	(x==HTTP_TEMPORARY_REDIRECT)     ? "Temporary Redirect" :\
+	(x==HTTP_BAD_REQUEST)		     ? "Bad Request" :\
+	(x==HTTP_UNAUTHORIZED)		     ? "Unauthorized" :\
+	(x==HTTP_PAYMENT_REQUIRED)	     ? "Payment Required" :\
+	(x==HTTP_FORBIDDEN)			     ? "Forbidden" :\
+	(x==HTTP_NOT_FOUND)			     ? "Not Found" :\
+	(x==HTTP_NOT_ACCEPTABLE)	     ? "Not Acceptable" :\
+	(x==HTTP_REQUEST_TIMEOUT)	     ? "Request Time-out" :\
+	(x==HTTP_URI_TOO_LONG)		     ? "Request-URI Too Large" :\
+	(x==HTTP_UNSUPPORTED_MEDIA_TYPE) ? "Unsupported Media Type" :\
+	(x==HTTP_RANGE_ERROR)		     ? "Requested range not satisfiable" :\
+	(x==HTTP_INTERNAL_ERROR)	     ? "Internal Server Error" :\
+	(x==HTTP_NOT_IMPLEMENTED)	     ? "Not Implemented" :\
+	(x==HTTP_BAD_GATEWAY)		     ? "Bad Gateway" :\
+	(x==HTTP_UNAVAILABLE)		     ? "Service Unavailable" :\
+	(x==HTTP_GATEWAY_TIMEOUT)	     ? "Gateway Time-out" :\
+	(x==HTTP_VERSION_NOT_SUPPORTED)  ? "HTTP Version not supported":\
    	"invalid" )
 
-
-// HTTP macros
-
-#define HTTP_IS_UNDEF(n)		(n==0)
-#define HTTP_IS_ERROR(n)   		(n>0 && n<100)
-#define HTTP_IS_OK(n)			(n>=200 && n<300)
-#define HTTP_IS_REDIRECT(n)		(n>=300 && n<400)
-#define HTTP_IS_CLIENT_ERROR(n) (n>=400 && n<500)
-#define HTTP_IS_SERVER_ERROR(n) (n>=500 && n<600)
+/*
+  Macro pour verifier le type du code de retour
+ */
+#define HTTP_IS_INFORMATIONAL(n) (n=>100 && n<200)
+#define HTTP_IS_SUCCESS(n)		 (n>=200 && n<300)
+#define HTTP_IS_REDIRECT(n)		 (n>=300 && n<400)
+#define HTTP_IS_CLIENT_ERROR(n)  (n>=400 && n<500)
+#define HTTP_IS_SERVER_ERROR(n)  (n>=500 && n<600)
 
 #endif
