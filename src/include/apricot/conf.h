@@ -1,6 +1,8 @@
 #ifndef _CONF_
 #define _CONF_
 
+#include <magic.h>
+
 #define ROOT_MAX 255
 #define NR_HOSTS 100
 #define HOST_NAME_MAX 255
@@ -13,6 +15,9 @@
 		char hosts_root[NR_HOSTS][HOST_NAME_MAX];
 		int nr_hosts;
 		char log_file[LOG_MAX];
+		
+		/* libmagic cookie for mime types */
+		magic_t magic;
 	} conf_t;
 	
 	/* Lit le fichier de configuration */

@@ -57,7 +57,7 @@ void dispatch(int acceptfd, SA *client_addr)
 			if (!(S_ISREG(fs.st_mode)) || !(S_IRUSR & fs.st_mode))
 				http_code = HTTP_FORBIDDEN;
 			else
-				http_code = static_serve(acceptfd, request.uri);
+				http_code = static_serve(acceptfd, filename);
 		}
 		else
 		{

@@ -2,10 +2,11 @@
 #include <apricot/pool.h>
 #include <apricot/log.h>
 #include <apricot/csapp.h>
-#include <apricot/log.h>
+#include <apricot/conf.h>
 
 #include <stdlib.h>
 #include <string.h>
+#include <magic.h>
 
 #define POOL_SIZE 16
 
@@ -21,7 +22,15 @@ void master_start(int port, char ** argv)
 
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
-
+	
+	/* open magic library */
+	if(!(conf.magic = magic_open(MAGIC_MIME_TYPE)))
+	{
+	  log_error("failed to open libmagic");
+	}
+	
+	magic_load(conf.magic, NULL);
+	
     listenfd = Open_listenfd(port);
 
 	/* init signals */
@@ -38,6 +47,7 @@ void master_start(int port, char ** argv)
 void master_stop()
 {
 	pool_destroy();
+	magic_close(conf.magic);
 	unlink(LOCK_FILE);
 	log_info("Apricot web server stopped");
 }

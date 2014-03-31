@@ -379,7 +379,7 @@ void http_response_write(int fd, http_response_t *response)
 		Rio_writen(fd, field_line, strlen(field_line));
 	}
 
-	/* We add server name if not precised, should we force Apricot Web Server ? */
+	/* We add server name because we are proud of it */
 	if(!*response->server)
 		strcpy(response->server, SERVER_NAME);
 

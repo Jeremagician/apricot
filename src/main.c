@@ -84,11 +84,16 @@ int main(int argc, char ** argv)
 		print_help();
 		exit(EXIT_FAILURE);
 	}
+<<<<<<< HEAD
 
 	/* read configuration file
 		Affiche les erreurs sur l'entrée standard au lieu du fichier de log
 		car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
 		sa configuration.
+=======
+	
+	/* read configuration file 
+>>>>>>> 6afc7d6d85fe1d980014d6da1f96605a86c0cfb2
 	*/
 	conf_read(user_supplied_conf_filename);
 
