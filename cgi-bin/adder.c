@@ -20,14 +20,11 @@ int main(void) {
     }
 
     /* Make the response body */
-    snprintf(content1, sizeof(content1), "Welcome to the Internet addition portal.\n");
-    snprintf(content2, sizeof(content2), "%sThe answer is: %d + %d = %d\n",
+    snprintf(content1, sizeof(content1), "<html><body>Welcome to the Internet addition portal.<br>");
+    snprintf(content2, sizeof(content2), "%sThe answer is: %d + %d = %d<br>",
             content1, n1, n2, n1 + n2);
-    snprintf(content1, sizeof(content1), "%sThanks for visiting!\n", content2);
+    snprintf(content1, sizeof(content1), "%sThanks for visiting!\n</body></html>", content2);
 
-    /* Generate the HTTP response */
-    printf("Content-length: %d\r\n", (int)strlen(content1));
-    printf("Content-type: text/plain\r\n\r\n");
     printf("%s", content1);
     fflush(stdout);
     exit(EXIT_SUCCESS);

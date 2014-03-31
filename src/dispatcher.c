@@ -78,7 +78,10 @@ void dispatch(int acceptfd, SA *client_addr)
 			);
 
 	if(http_code != HTTP_OK)
+	{
 		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));
+		close(acceptfd);
+	}
 }
 
 static int parse_uri(char *uri, char *filename, char *cgiargs)

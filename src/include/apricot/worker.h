@@ -22,7 +22,7 @@ typedef struct cgi_t
 {
 	pid_t pid;
 	int clientfd;
-    int cgifd;
+    FILE* cgifile;
 } cgi_t;
 
 cgi_t cgi_table[MAX_CGI];

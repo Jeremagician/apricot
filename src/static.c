@@ -26,5 +26,6 @@ int static_serve(int clientfd, char * uri)
 
     Rio_writen(clientfd, body1, strlen(body1));
 
+	close(clientfd);
 	return HTTP_OK;
 }

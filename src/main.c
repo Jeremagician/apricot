@@ -22,14 +22,14 @@ int main(int argc, char ** argv)
 	int daemon = 0;
 	FILE * log_file;
 	char * user_supplied_conf_filename = NULL;
-	
+
 	/* check that apricot is not already running */
 	if(open(LOCK_FILE, O_CREAT | O_EXCL) < 0)
 	{
 		fprintf(stderr, "Apricot is already running.\n");
 		exit(EXIT_FAILURE);
 	}
-    
+
     while((opt = getopt(argc, argv, "dp:vhc:")) != -1)
 	{
 		switch(opt)
@@ -39,14 +39,14 @@ int main(int argc, char ** argv)
 				print_help();
 				exit(EXIT_FAILURE);
 			break;
-			
+
 			case 'd':
 				daemon = 1;
 			break;
-			
+
 			case 'p':
 				port = atoi(optarg);
-				
+
 				if(port <= 0 || port >= 65536)
 				{
 					fprintf(stderr, "Invalid port %i\n", port);
@@ -54,22 +54,22 @@ int main(int argc, char ** argv)
 					exit(EXIT_FAILURE);
 				}
 			break;
-			
+
 			case 'v':
 				printf("Apricot Web Server - version %.2f\n", APRICOT_VERSION);
 				exit(EXIT_FAILURE);
 				break;
 			break;
-			
+
 			case 'h':
 				print_help();
 				exit(EXIT_FAILURE);
 			break;
-			
+
 			case 'c':
 				user_supplied_conf_filename = optarg;
 			break;
-				
+
 			case ':':
 				fprintf(stderr, "Invalid option\n");
 				print_help();
@@ -77,34 +77,34 @@ int main(int argc, char ** argv)
 			break;
 		}
 	}
-	
+
 	if(optind != argc)
 	{
 		fprintf(stderr, "Bad option\n");
 		print_help();
 		exit(EXIT_FAILURE);
 	}
-	
-	/* read configuration file 
+
+	/* read configuration file
 		Affiche les erreurs sur l'entrée standard au lieu du fichier de log
 		car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
 		sa configuration.
 	*/
 	conf_read(user_supplied_conf_filename);
-	
+
 	if(daemon)
 	{
 		daemonize();
 	}
-	
-	log_file = fopen(conf.log_file, "a+");
-	
+
+	log_file = stdout; // fopen(conf.log_file, "a+");
+
 	if(!log_file)
 	{
 		fprintf(stderr, "Failed to create log file %s\n", conf.log_file);
 		exit(EXIT_FAILURE);
 	}
-	
+
 	/* start log */
 	log_set_level(LOG_ALL);
 	log_set_file(log_file);
@@ -132,16 +132,16 @@ void print_help()
 void daemonize()
 {
 	pid_t pid = fork();
-		
+
 	if(pid == -1)
 	{
 		fprintf(stderr, "Failed to daemonize, fork failed\n");
 		exit(EXIT_FAILURE);
 	}
-		
+
 	if(pid > 0) // le pere se termine
 		exit(EXIT_SUCCESS);
-		
+
 	/* On crée une nouvelle session dont on devient le leader.
 	On est à présent détaché du terminal de contrôle */
 	if(setsid() == -1)
@@ -149,14 +149,14 @@ void daemonize()
 		fprintf(stderr, "Failed to daemonize, setsid failed\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	/* On vérifie que notre père est bien init */
 	if(getppid() != 1)
 	{
 		fprintf(stderr, "Failed to daemonize, not child process of init\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	/* On doit changer de répertoire courant pour ne plus dépendre
 	d'un répertoire utilisateur, on choisit la racine pour le moment */
 	if(chdir(conf.root) < 0)
@@ -164,10 +164,10 @@ void daemonize()
 		fprintf(stderr, "Failed to daemonize, chdir failed\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	/* On change l'umask */
 	umask(0);
-	
+
 	/* on ferme les fichiers standards pour ne plus dépendre du
 	terminal de contrôle */
 	fclose(stderr);

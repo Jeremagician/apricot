@@ -2,6 +2,9 @@
 #include <apricot/csapp.h>
 #include <apricot/dispatcher.h>
 #include <apricot/log.h>
+#include <apricot/http_header.h>
+#include <apricot/http_error.h>
+#include <apricot/http_codes.h>
 
 static void init_signals();
 static void signal_handler(int sig);
@@ -27,9 +30,8 @@ void worker_start(int listenfd)
 		if(confd != -1)
 		{
 			worker_lock();
-			dispatch(confd, (SA *)&client_addr);
+			dispatch(confd, (SA *)&client_addr); /* Confd is closed by the dispatch function */
 			worker_unlock();
-			Close(confd);
 
 			if(check_pending(SIGTERM)) /* On a reçu un SIGTERM pendant le service du client */
 				running = 0;
@@ -87,19 +89,38 @@ static void signal_handler(int sig)
 			}
 			else
 			{
-				char buf[MAXLINE];
-				rio_t rio;
 
-				log_info("cgi info pid : %i client : %i data : %i", cgi_table[i].pid, cgi_table[i].clientfd, cgi_table[i].cgifd);
-
-				Rio_readinitb(&rio, cgi_table[i].cgifd);
-				Rio_readlineb(&rio, buf, MAXLINE);
-				while(Rio_readlineb(&rio, buf, MAXLINE) ==  MAXLINE)
+				if(WEXITSTATUS(status) != EXIT_SUCCESS)
 				{
-					printf("%s\n", buf);
+					/*
+					  Le programme s'est quitté anormalement, on renvoie une erreur 500
+					 */
+					http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
+					log_error("cgi (%i) execution error", pid);
 				}
+				else
+				{
+					char * buf;
+					struct stat sbuf;
+					http_response_t response;
+					int cgifd = fileno(cgi_table[i].cgifile);
 
-				close(cgi_table[i].cgifd);
+					fstat(cgifd, &sbuf);
+
+					/* On crée notre entête http */
+					http_response_default(&response, 1, 0, HTTP_OK);
+					strcpy(response.content_type, "text/html");
+					response.content_length = (int)sbuf.st_size;
+					http_response_write(cgi_table[i].clientfd, &response);
+
+					/* On map le fichier sortie */
+					buf = mmap(0, sbuf.st_size, PROT_READ, MAP_PRIVATE, cgifd, 0);
+					Rio_writen(cgi_table[i].clientfd, buf, sbuf.st_size);
+					munmap(buf, sbuf.st_size);
+				}
+				/* On ferme les descripteur de fichiers et on enlève le cgi de la table */
+				fclose(cgi_table[i].cgifile);
+				close(cgi_table[i].clientfd);
 				memcpy(&cgi_table[i], &cgi_table[cgi_table_size], sizeof(cgi_t));
 				cgi_table_size--;
 			}
