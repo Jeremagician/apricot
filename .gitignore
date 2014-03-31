@@ -3,6 +3,7 @@ src/*.o
 *~
 /bin/apricot
 /bin/sites/cgi-bin/*
+apricot.log
 autom4te.cache
 config.h
 config.status

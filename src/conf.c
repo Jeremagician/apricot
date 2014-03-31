@@ -21,6 +21,7 @@ void conf_read(const char * conf_filename)
 	char buf[255];
 	char buf2[255];
 	struct stat fs;
+	int i;
 	
 	if(conf_filename)
 		conf_file = fopen(conf_filename, "r");
@@ -33,8 +34,7 @@ void conf_read(const char * conf_filename)
 		exit(EXIT_FAILURE);
 	}
 	
-	conf.listen_port = -1;
-	conf.root[0] = '\0';
+	bzero(&conf, sizeof(conf_t));
 	
 	while(fgets(buf, 254, conf_file))
 	{
@@ -56,6 +56,15 @@ void conf_read(const char * conf_filename)
 		{
 			sscanf(buf, "%25s %254s", buf2, conf.root);
 		}
+		else if(!strcmp(buf2, "host"))
+		{
+			sscanf(buf, "%25s %254s %254s", buf2, conf.hosts[conf.nr_hosts], conf.hosts_root[conf.nr_hosts]);
+			conf.nr_hosts++;
+		}
+		else if(!strcmp(buf2, "log"))
+		{
+			sscanf(buf, "%25s %254s", buf2, conf.log_file);
+		}
 	}
 	
 	if(conf.listen_port <= 0 || conf.listen_port >= 65536)
@@ -68,6 +77,27 @@ void conf_read(const char * conf_filename)
 	{
 		fprintf(stderr, "Invalid root directory specified in apricot.conf\n");
 		exit(EXIT_FAILURE);
+	}
+	
+	if(conf.nr_hosts == 0)
+	{
+		fprintf(stderr, "No host specified in apricot.conf\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	for(i=0; i < conf.nr_hosts; i++)
+	{
+		if(!*conf.hosts[i])
+		{
+			fprintf(stderr, "Empty host name in apricot.conf\n");
+			exit(EXIT_FAILURE);
+		}
+	
+		if(stat(conf.hosts_root[i], &fs) < 0)
+		{
+			fprintf(stderr, "Invalid root directory for host %s in apricot.conf\n", conf.hosts_root[i]);
+			exit(EXIT_FAILURE);
+		}
 	}
 	
 	fclose(conf_file);

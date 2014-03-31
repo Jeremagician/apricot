@@ -10,7 +10,6 @@
 #include <fcntl.h>
 
 #define APRICOT_VERSION 0.1
-#define DEFAULT_DAEMON_LOGFILE "/tmp/apricot.log"
 
 /* Prototypes */
 void print_help();
@@ -96,15 +95,14 @@ int main(int argc, char ** argv)
 	if(daemon)
 	{
 		daemonize();
-		
-		/* Si on est un démon on doit écrire les logs dans un fichier
-		disponible sur l'ensemble du système. On utilise pour le
-		moment /tmp/apricot.log */
-		log_file = fopen(DEFAULT_DAEMON_LOGFILE, "a+");
 	}
-	else
+	
+	log_file = fopen(conf.log_file, "a+");
+	
+	if(!log_file)
 	{
-		log_file = stdout;
+		fprintf(stderr, "Failed to create log file %s\n", conf.log_file);
+		exit(EXIT_FAILURE);
 	}
 	
 	/* start log */
@@ -161,7 +159,7 @@ void daemonize()
 	
 	/* On doit changer de répertoire courant pour ne plus dépendre
 	d'un répertoire utilisateur, on choisit la racine pour le moment */
-	if(chdir("/") < 0)
+	if(chdir(conf.root) < 0)
 	{
 		fprintf(stderr, "Failed to daemonize, chdir failed\n");
 		exit(EXIT_FAILURE);

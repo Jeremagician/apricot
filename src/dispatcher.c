@@ -73,7 +73,7 @@ void dispatch(int acceptfd, SA *client_addr)
 			  request.http_version_major,
 			  request.http_version_minor,
 			  straddr(request.client_address),
-			  get_client_hostname(acceptfd),
+			  get_client_hostname(request.client_address),
 			  http_code
 			);
 
@@ -87,7 +87,7 @@ static int parse_uri(char *uri, char *filename, char *cgiargs)
 
     if (!strstr(uri, "cgi-bin")) {  /* Static content */
         strcpy(cgiargs, "");
-        strcpy(filename, conf.root);
+        strcpy(filename, conf.hosts_root[0]);
         strcat(filename, uri);
         if (uri[strlen(uri)-1] == '/')
             strcat(filename, "home.html");
@@ -101,7 +101,7 @@ static int parse_uri(char *uri, char *filename, char *cgiargs)
         }
         else
             strcpy(cgiargs, "");
-        strcpy(filename, conf.root);
+        strcpy(filename, conf.hosts_root[0]);
 		strcat(filename, "/");
         strcat(filename, uri);
         return 0;

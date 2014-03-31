@@ -56,12 +56,12 @@ char * straddr(struct sockaddr_in addr)
 
 /* get client host name */
 
-char * get_client_hostname(int fd)
+char * get_client_hostname(struct sockaddr_in addr)
 {
-	struct hostent * host;
-	struct sockaddr_in addr = getclientaddr(fd);
+	struct hostent * host = gethostbyaddr(&addr.sin_addr, sizeof(struct in_addr), AF_INET);
 	
-	host = gethostbyaddr(&addr.sin_addr, sizeof(struct in_addr), AF_INET);
+	if(!host)
+		return "HOST NOT AVAILABLE";
 	
 	return host->h_name;
 }
