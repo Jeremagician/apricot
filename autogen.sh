@@ -11,7 +11,7 @@ do
 done
 
 echo '
-bin_apricot_LDFLAGS = -lpthread
+bin_apricot_LDFLAGS = -lpthread -lmagic
 bin_apricot_CFLAGS = -Wall -Werror -Isrc/include
 
 apricotconfdir=$(sysconfdir)/apricot

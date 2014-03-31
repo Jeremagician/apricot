@@ -86,9 +86,6 @@ int main(int argc, char ** argv)
 	}
 	
 	/* read configuration file 
-		Affiche les erreurs sur l'entrée standard au lieu du fichier de log
-		car c'est mieux de ne pas lancer un daemon s'il n'a pas réussit à lire
-		sa configuration.
 	*/
 	conf_read(user_supplied_conf_filename);
 	

@@ -2,29 +2,42 @@
 #include <apricot/csapp.h>
 #include <apricot/http_codes.h>
 #include <apricot/http_header.h>
+#include <apricot/mime.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
-int static_serve(int clientfd, char * uri)
+int static_serve(int clientfd, char * filename)
 {
-	/* THIS IS FOR DEBUG PURPOSE ONLY */
-    char body1[MAXBUF], body2[MAXBUF];
-
 	static http_response_t response;
-
-    /* Build the HTTP response body */
-    snprintf(body1, sizeof(body1), "<html><title>Apricot Test</title>");
-    snprintf(body2, sizeof(body2), "%s<body bgcolor=""ffffff"">\r\n", body1);
-    snprintf(body1, sizeof(body1), "%s<h1>It's work !</h1>\r\n", body2);
-    snprintf(body2, sizeof(body2), "%s<em>This is pretty apache like but, well</em>", body1);
-    snprintf(body1, sizeof(body1), "%s<hr><em>Apricot Web server</em>\r\n", body2);
+	struct stat filestat;
+	
+	if(stat(filename, &filestat) < 0)
+	  return HTTP_NOT_FOUND;
 
     /* Print the HTTP response */
 	http_response_default(&response, 1, 0, HTTP_OK);
-	strcpy(response.content_type, "text/html");
-	response.content_length = (int)strlen(body1);
+	strcpy(response.content_type, mime_type(filename));
+	response.content_length = filestat.st_size;
 	http_response_write(clientfd, &response);
+	
+	/* file mapping */
+	int filefd = open(filename, O_RDONLY);
+	
+	if(filefd < 0)
+	  return HTTP_NOT_FOUND;
+	
+	void * file_ptr = mmap(NULL, filestat.st_size, PROT_READ, MAP_PRIVATE, filefd, 0);
+	
+	if(file_ptr == MAP_FAILED)
+	{
+		return HTTP_NOT_FOUND;
+	}
 
-    Rio_writen(clientfd, body1, strlen(body1));
+    Rio_writen(clientfd, file_ptr, filestat.st_size);
+	
+	munmap(file_ptr, filestat.st_size);
+	close(filefd);
 
 	return HTTP_OK;
 }
