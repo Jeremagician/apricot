@@ -70,81 +70,81 @@ int http_request_read(int fd, http_request_t * request)
 		[HASH_LAST_MODIFIED] = &&last_modified,
 		&&not_supported
 	};
-	
+
 	Rio_readinitb(&rio, fd);
-	
+
 	/* read request line */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
-	
+
 	if(sscanf(buf, "%24s %8096s HTTP/%i.%i", method, request->uri, &request->http_version_major, &request->http_version_minor) != 4)
 	{
 		 http_clienterror(fd, HTTP_BAD_REQUEST, "Bad request line");
 		 return -1;
 	}
-	
+
 	/* method */
 	if(strcasecmp(method, "GET"))
 	{
 		http_clienterror(fd, HTTP_NOT_IMPLEMENTED, "Apricot does not implement his method");
 		return -1;
 	}
-	
+
 	request->method = HTTP_METHOD_GET;
-	
+
 	/* check http version number */
-	if(request->http_version_major < 0 || request->http_version_minor < 0 
+	if(request->http_version_major < 0 || request->http_version_minor < 0
 		|| request->http_version_major > 9 || request->http_version_minor > 9)
 	{
 		http_clienterror(fd, HTTP_BAD_REQUEST, "Bad HTTP version");
 		return -1;
 	}
-	
+
 	/* read client IP address */
 	request->client_address = getclientaddr(fd);
-	
+
 	/* read other headers */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
-    
+
     while (!(buf[0] == '\r' && buf[1] == '\n') && buf[0] != '\n')
-    {	
+    {
     	/* Lit chaque header */
-    	/* Chaque header est composé d'un champ et d'un contenu séparé par ':' 
+    	/* Chaque header est composé d'un champ et d'un contenu séparé par ':'
 		 * on utilise strtok car le contenu du champs peut contenir ':' ce qui trouble
 		 * sscanf
 		 */
-		
+
     	field = strtok(buf, ":");
     	content = strtok(NULL, ": ");
 		strlower(field);
-		
+
 		/* Dispatch chaque nom de champ vers le code de remplissage
 		 * de la structure http_request_t. Les valeurs de hachage des
 		 * noms des champs ont été précalculées et sont sans collision.
 		 * On utilise un goto calculé, l'adresse du label est indiquée
 		 * dans la table indexée par la valeur de hachage du nom.
 		 * Ces gotos sont une extension gcc.
-		 * 
+		 *
 		 * http://eli.thegreenplace.net/2012/07/12/computed-goto-for-efficient-dispatch-tables/
 		 */
-		
+
 		goto *request_header_table[hash(field)%TABLE_SIZE];
-		
+
 		accept :
 			strncpy(request->accept, content, ACCEPT_MAX);
 			goto fetch;
-			
+
 		accept_charset :
 			strncpy(request->accept_charset, content,  ACCEPT_CHARSET_MAX);
 			goto fetch;
-			
+
 		accept_encoding :
 			strncpy(request->accept_encoding, content, ACCEPT_ENCODING_MAX);
 			goto fetch;
-			
+
 		accept_language :
 			strncpy(request->accept_language, content, ACCEPT_LANGUAGE_MAX);
 			goto fetch;
-			
+
 		allow :
 			if(!strcasecmp(content, "GET"))
 			{
@@ -159,122 +159,122 @@ int http_request_read(int fd, http_request_t * request)
 			  request->allow = ALLOW_PUT;
 			}
 			goto fetch;
-		
+
 		authorization :
 			strncpy(request->authorization,  content, AUTHORIZATION_MAX);
 			goto fetch;
-			
+
 		content_encoding :
 			strncpy(request->content_encoding, content, CONTENT_ENCODING_MAX);
 			goto fetch;
-			
+
 		content_language :
 			strncpy(request->content_language, content, CONTENT_LANGUAGE_MAX);
 			goto fetch;
-		
+
 		content_length :
 			request->content_length = atoi(content);
 			goto fetch;
-			
+
 		content_location :
 			strncpy(request->content_location, content, URI_MAX);
 			goto fetch;
-			
+
 		content_md5 :
 			strncpy(request->content_md5, content, CONTENT_MD5_MAX);
 			goto fetch;
-			
+
 		content_range :
 			strncpy(request->content_range, content, CONTENT_RANGE_MAX);
 			goto fetch;
-			
+
 		content_type :
 			strncpy(request->content_type, content, CONTENT_TYPE_MAX);
 			goto fetch;
-			
+
 		expires :
 			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->expires);
 			goto fetch;
-			
+
 		expect :
 			strncpy(request->expect, content, EXPECTATION_MAX);
 			goto fetch;
-		
+
 		from :
 			strncpy(request->from, content, FROM_MAX);
 			goto fetch;
-		
+
 		host :
 			strncpy(request->host, content, HOST_MAX);
 			goto fetch;
-			
+
 		referer :
 			strncpy(request->referer, content, URI_MAX);
 			goto fetch;
-			
+
 		transfer_encoding :
 			strncpy(request->transfer_encoding, content, TE_MAX);
 			goto fetch;
-		
+
 		user_agent :
 			strncpy(request->user_agent, content, USER_AGENT_MAX);
 			goto fetch;
-			
+
 		cache_control :
 			strncpy(request->cache_control, content, CACHE_CONTROL_MAX);
 			goto fetch;
-			
+
 		connection :
 			strncpy(request->connection,  content, CONNECTION_MAX);
 			goto fetch;
-			
+
 		date :
 			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->date);
 			goto fetch;
-			
+
 		pragma :
 			strncpy(request->pragma, content, PRAGMA_MAX);
 			goto fetch;
-		
+
 		trailer :
 			strncpy(request->trailer, content, TRAILER_MAX);
 			goto fetch;
-			
+
 		upgrade :
 			strncpy(request->upgrade, content, UPGRADE_MAX);
 			goto fetch;
-			
+
 		via :
 			strncpy(request->via, content, VIA_MAX);
 			goto fetch;
-		
+
 		warning :
 			sscanf(content, "%3i", &request->warn_code);
 			goto fetch;
-			
+
 		last_modified :
 			strptime(content, "%a, %d %b %Y %H:%M:%S GMT", &request->last_modified);
 			goto fetch;
-			
+
 		not_supported :
 			log_info("Request header field %s not supported", field);
 			goto fetch;
-		
+
 		fetch :
-    	
+
         Rio_readlineb(&rio, buf, BUF_SIZE);
     }
-    
-    /* checks that a host header has been given 
+
+    /* checks that a host header has been given
 	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23
 	 */
-	
+
     if(!*request->host)
 	{
 		http_clienterror(fd, HTTP_BAD_REQUEST, "No Host header");
 		return -1;
 	}
-	
+
 	return 0;
 }
 
@@ -307,7 +307,7 @@ typedef struct {
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
-	
+
 	int allow;
 	char content_encoding[CONTENT_ENCODING_MAX];
 	char content_language[CONTENT_LANGUAGE_MAX];
@@ -382,7 +382,7 @@ void http_response_write(int fd, http_response_t *response)
 	/* We add server name if not precised, should we force Apricot Web Server ? */
 	if(!*response->server)
 		strcpy(response->server, SERVER_NAME);
-	
+
 	sprintf(field_line, "Server: %s\r\n", response->server);
 	Rio_writen(fd, field_line, strlen(field_line));
 
@@ -408,14 +408,14 @@ void http_response_write(int fd, http_response_t *response)
 	{
 		sprintf(field_line, "Connection: %s\r\n", response->connection);
 		Rio_writen(fd, field_line, strlen(field_line));
-	}	
+	}
 
 	if(response->date.tm_year != 0) /* better solution ? */
 	{
 		sprintf(field_line, "Date: %s\r\n", http_date(&response->date));
 		Rio_writen(fd, field_line, strlen(field_line));
 	}
-	
+
 	if(*response->pragma)
 	{
 		sprintf(field_line, "Pragma: %s\r\n", response->pragma);
@@ -443,7 +443,7 @@ void http_response_write(int fd, http_response_t *response)
 	/* We have to talk about the two nexts */
 	if(response->warn_code)
 		log_error("Reponse header field 'Warning' not implemented");
-	
+
 	if(response->allow)
 		log_error("Reponse header field 'allow' not implemented");
 
@@ -500,6 +500,17 @@ void http_response_write(int fd, http_response_t *response)
 		sprintf(field_line, "Last-Modified: %s\r\n", http_date(&response->last_modified));
 		Rio_writen(fd, field_line, strlen(field_line));
 	}
-	
+
 	Rio_writen(fd, "\r\n", 2); /* On termine l'écriture du header */
+}
+
+void http_response_default(http_response_t *response, int http_major, int http_minor, int status)
+{
+	assert(response);
+	bzero(response, sizeof(http_response_t));
+	response->http_version_major = http_major;
+	response->http_version_minor = http_minor;
+	response->status_code = status;
+	strcpy(response->reason_phrase, HTTP_STR(status));
+	response->age = -1;
 }
