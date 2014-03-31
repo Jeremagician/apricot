@@ -333,7 +333,7 @@ void http_response_write(int fd, http_response_t *response)
 	assert(response);
 
 	/* response line */
-	sprintf(response_line, "HTTP%1i/%1i %i %s\r\n", response->http_version_major,
+	sprintf(response_line, "HTTP/%1i.%1i %i %s\r\n", response->http_version_major,
 			response->http_version_minor, response->status_code, response->reason_phrase);
 
 	Rio_writen(fd, response_line, strlen(response_line));
