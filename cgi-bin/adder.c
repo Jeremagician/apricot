@@ -20,10 +20,10 @@ int main(void) {
     }
 
     /* Make the response body */
-    snprintf(content1, sizeof(content1), "<html><body>Welcome to the Internet addition portal.<br>");
-    snprintf(content2, sizeof(content2), "%sThe answer is: %d + %d = %d<br>",
+    snprintf(content1, sizeof(content1), "Welcome to the Internet addition portal.\n");
+    snprintf(content2, sizeof(content2), "%sThe answer is: %d + %d = %d\n",
             content1, n1, n2, n1 + n2);
-    snprintf(content1, sizeof(content1), "%sThanks for visiting!\n</body></html>", content2);
+    snprintf(content1, sizeof(content1), "%sThanks for visiting!\n", content2);
 
     printf("%s", content1);
     fflush(stdout);

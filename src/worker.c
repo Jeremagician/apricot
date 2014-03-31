@@ -109,7 +109,7 @@ static void signal_handler(int sig)
 
 					/* On crée notre entête http */
 					http_response_default(&response, 1, 0, HTTP_OK);
-					strcpy(response.content_type, "text/html");
+					strcpy(response.content_type, "text/plain");
 					response.content_length = (int)sbuf.st_size;
 					http_response_write(cgi_table[i].clientfd, &response);
 
