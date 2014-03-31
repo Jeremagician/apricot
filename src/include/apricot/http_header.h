@@ -43,7 +43,7 @@ from http://www.w3.org/Protocols/rfc2616/rfc2616.html */
 typedef struct {
 	/* client address */
 	struct sockaddr_in client_address;
-  
+
 	/* Request line */
 	int method;
 	int http_version_major;
@@ -72,7 +72,7 @@ typedef struct {
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
-	
+
 	/* entity headers */
 	int allow;
 	char content_encoding[CONTENT_ENCODING_MAX];
@@ -114,7 +114,7 @@ typedef struct {
 	char upgrade[UPGRADE_MAX];
 	char via[VIA_MAX];
 	int warn_code;
-	
+
 	/* entity headers */
 	int allow;
 	char content_encoding[CONTENT_ENCODING_MAX];
@@ -131,7 +131,7 @@ typedef struct {
 
 /* methods */
 
-enum{HTTP_METHOD_OPTIONS,
+enum{HTTP_METHOD_OPTIONS = 1,
 	HTTP_METHOD_GET,
 	HTTP_METHOD_HEAD,
 	HTTP_METHOD_POST,
@@ -151,7 +151,7 @@ enum{REQUEST_NO_CACHE,
 	REQUEST_ONLY_IF_CACHED,
 	REQUEST_CACHE_EXTENSION
 	};
-	
+
 /* allow */
 enum{	ALLOW_GET,
 	ALLOW_HEAD,
@@ -161,6 +161,12 @@ enum{	ALLOW_GET,
 /* fills the request header according to the data read on fd */
 
 int http_request_read(int fd, http_request_t * request);
+void http_response_write(int fd, http_response_t *response);
+
+/*
+  Init an http_response to default values
+ */
+void http_response_default(http_response_t *response, int http_major, int http_minor, int status);
 
 /* request headers fields names hash values according to djb2 function
  * defined in utils.c */

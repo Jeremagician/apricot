@@ -1,12 +1,16 @@
 #include <apricot/static.h>
 #include <apricot/csapp.h>
 #include <apricot/http_codes.h>
+#include <apricot/http_header.h>
+#include <string.h>
 
 int static_serve(int clientfd, char * uri)
 {
 	/* THIS IS FOR DEBUG PURPOSE ONLY */
-	char buf1[MAXLINE];
     char body1[MAXBUF], body2[MAXBUF];
+
+	static http_response_t response;
+	bzero(&response, sizeof(response));
 
     /* Build the HTTP response body */
     snprintf(body1, sizeof(body1), "<html><title>Apricot Test</title>");
@@ -16,12 +20,11 @@ int static_serve(int clientfd, char * uri)
     snprintf(body1, sizeof(body1), "%s<hr><em>Apricot Web server</em>\r\n", body2);
 
     /* Print the HTTP response */
-    snprintf(buf1, sizeof(buf1), "HTTP/1.0 %s %s\r\n", "200", "Ok");
-    Rio_writen(clientfd, buf1, strlen(buf1));
-    snprintf(buf1, sizeof(buf1), "Content-type: text/html\r\n");
-    Rio_writen(clientfd, buf1, strlen(buf1));
-    snprintf(buf1, sizeof(buf1), "Content-length: %d\r\n\r\n", (int)strlen(body1));
-    Rio_writen(clientfd, buf1, strlen(buf1));
+	http_response_default(&response, 1, 0, HTTP_OK);
+	strcpy(response.content_type, "text/html");
+	response.content_length = (int)strlen(body1);
+	http_response_write(clientfd, &response);
+
     Rio_writen(clientfd, body1, strlen(body1));
 	return HTTP_OK;
 }
