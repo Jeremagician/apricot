@@ -2,7 +2,12 @@
 src/*.o
 *~
 /bin/apricot
+/bin/sites/cgi-bin/*
 autom4te.cache
 config.h
 config.status
 Makefile
+.deps
+.dirstamp
+stamp-h1
+config.log

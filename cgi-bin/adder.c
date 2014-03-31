@@ -30,6 +30,6 @@ int main(void) {
     printf("Content-type: text/plain\r\n\r\n");
     printf("%s", content1);
     fflush(stdout);
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
 /* $end adder */

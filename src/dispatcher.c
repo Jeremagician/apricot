@@ -67,11 +67,11 @@ void dispatch(int acceptfd, SA *client_addr)
 				http_code = dynamic_serve(acceptfd, filename, cgiargs);
 		}
 	}
-	
-	log_info("GET %s HTTP %i.%i %s %s %i", 
-			  request.uri, 
-			  request.http_version_major, 
-			  request.http_version_minor, 
+
+	log_info("GET %s HTTP %i.%i %s %s %i",
+			  request.uri,
+			  request.http_version_major,
+			  request.http_version_minor,
 			  straddr(request.client_address),
 			  get_client_hostname(acceptfd),
 			  http_code

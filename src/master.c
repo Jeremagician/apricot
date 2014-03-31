@@ -18,7 +18,7 @@ char ** arguments;
 void master_start(int port, char ** argv)
 {
 	int listenfd;
-	
+
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
 
@@ -37,9 +37,9 @@ void master_start(int port, char ** argv)
 
 void master_stop()
 {
-	log_info("Apricot web server stopped");
 	pool_destroy();
 	unlink(LOCK_FILE);
+	log_info("Apricot web server stopped");
 }
 
 static void signal_handler(int sig)
