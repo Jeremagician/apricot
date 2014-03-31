@@ -5,6 +5,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <assert.h>
+#include <stdio.h>
+#include <time.h>
+
+#define DATE_BUF_MAX 255
 
 /* Dan Bernstein djb2 hash function
  * http://www.cse.yorku.ca/~oz/hash.html */
@@ -59,4 +64,29 @@ char * get_client_hostname(int fd)
 	host = gethostbyaddr(&addr.sin_addr, sizeof(struct in_addr), AF_INET);
 	
 	return host->h_name;
+}
+
+/* get http formatted date stamp
+   see : http://tools.ietf.org/html/rfc2616#page-21
+*/
+/*
+  We use days abbrev table to avoid locales
+  All days are on 3 characters
+ */
+static char* days[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+
+
+static char* months[] = { "Jan", "Feb", "Mar", "Apr",
+						   "May", "Jun", "Jul", "Aug",
+						   "Sep", "Oct", "Nov", "Dec" };
+
+char * http_date(struct tm *date)
+{
+	static char date_buf[DATE_BUF_MAX]; /* Declared as static to avoid allocation */
+	assert(date);
+	sprintf(date_buf, "%s, %02i %s %i %02i:%02i:%02i GMT", days[date->tm_wday], date->tm_mday,
+			months[date->tm_mon], date->tm_year+1900,
+			date->tm_hour, date->tm_min, date->tm_sec);
+	return date_buf;
 }

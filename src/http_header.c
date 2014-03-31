@@ -6,6 +6,7 @@
 #include <apricot/log.h>
 #include <apricot/utils.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <stdint.h>
 #include <time.h>
@@ -14,6 +15,10 @@
 
 #define BUF_SIZE METHOD_MAX + URI_MAX + 10
 #define TABLE_SIZE 1000
+
+#define REPONSE_LINE_SIZE (REASON_PHRASE_MAX + 10)
+#define FIELD_MAX 255
+#define SERVER_NAME "Apricot Web Server"
 
 /* buffer to read a line through the connection */
 static char buf[BUF_SIZE];
@@ -271,4 +276,230 @@ int http_request_read(int fd, http_request_t * request)
 	}
 	
 	return 0;
+}
+
+
+/*
+typedef struct {
+
+	int http_version_major;
+	int http_version_minor;
+	int status_code;
+	char reason_phrase[REASON_PHRASE_MAX];
+
+
+	char accept_ranges[ACCEPT_RANGES_MAX];
+	int age;
+	char etag[ETAG_MAX];
+	char location[URI_MAX];
+	char proxy_authenticate[PROXY_AUTH_MAX];
+	char retry_after[RETRY_AFTER_MAX];
+	char server[SERVER_MAX];
+	char vary[VARY_MAX];
+	char www_authenticate[WWW_AUTH_MAX];
+
+
+	char cache_control[CACHE_CONTROL_MAX];
+	char connection[CONNECTION_MAX];
+	struct tm date;
+	char pragma[PRAGMA_MAX];
+	char trailer[TRAILER_MAX];
+	char upgrade[UPGRADE_MAX];
+	char via[VIA_MAX];
+	int warn_code;
+	
+	int allow;
+	char content_encoding[CONTENT_ENCODING_MAX];
+	char content_language[CONTENT_LANGUAGE_MAX];
+	int content_length;
+	char content_location[URI_MAX];
+	char content_md5[CONTENT_MD5_MAX];
+	char content_range[CONTENT_RANGE_MAX];
+	char content_type[CONTENT_TYPE_MAX];
+	struct tm expires;
+	struct tm last_modified;
+
+} http_response_t;
+*/
+
+/*
+  See :
+  http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
+ */
+void http_response_write(int fd, http_response_t *response)
+{
+	char response_line[REPONSE_LINE_SIZE+1];
+	char field_line[FIELD_MAX];
+	assert(response);
+
+	/* response line */
+	sprintf(response_line, "HTTP%1i/%1i %i %s\r\n", response->http_version_major,
+			response->http_version_minor, response->status_code, response->reason_phrase);
+
+	Rio_writen(fd, response_line, strlen(response_line));
+
+	/*
+	  Les lignes suivante vont regarder pour chaque champ du response header
+	  si il est pertinent de l'envoyer ou pas, si oui,
+	  on envoie le champ sur le descripteur de fichier de la socket
+	 */
+	if(*response->accept_ranges)
+	{
+		sprintf(field_line, "Accept-Ranges: %s\r\n", response->accept_ranges);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(response->age >= 0)
+	{
+		sprintf(field_line, "Age: %i\r\n", response->age);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->etag)
+	{
+		sprintf(field_line, "ETag: \"%s\"\r\n", response->etag);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->location)
+	{
+		sprintf(field_line, "Location: %s\r\n", response->location);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->proxy_authenticate)
+	{
+		sprintf(field_line, "Proxy-Authenticate: %s\r\n", response->proxy_authenticate);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->retry_after)
+	{
+		sprintf(field_line, "Retry-After: %s\r\n", response->retry_after);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	/* We add server name if not precised, should we force Apricot Web Server ? */
+	if(!*response->server)
+		strcpy(response->server, SERVER_NAME);
+	
+	sprintf(field_line, "Server: %s\r\n", response->server);
+	Rio_writen(fd, field_line, strlen(field_line));
+
+	if(*response->vary)
+	{
+		sprintf(field_line, "Vary: %s\r\n", response->vary);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->www_authenticate)
+	{
+		sprintf(field_line, "WWW-Authenticate: %s\r\n", response->www_authenticate);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->cache_control)
+	{
+		sprintf(field_line, "Cache-Control: %s\r\n", response->cache_control);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->connection)
+	{
+		sprintf(field_line, "Connection: %s\r\n", response->connection);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}	
+
+	if(response->date.tm_year != 0) /* better solution ? */
+	{
+		sprintf(field_line, "Date: %s\r\n", http_date(&response->date));
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+	
+	if(*response->pragma)
+	{
+		sprintf(field_line, "Pragma: %s\r\n", response->pragma);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->trailer)
+	{
+		sprintf(field_line, "Trailer: %s\r\n", response->trailer);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->upgrade)
+	{
+		sprintf(field_line, "Upgrade: %s\r\n", response->upgrade);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->via)
+	{
+		sprintf(field_line, "via: %s\r\n", response->via);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	/* We have to talk about the two nexts */
+	if(response->warn_code)
+		log_error("Reponse header field 'Warning' not implemented");
+	
+	if(response->allow)
+		log_error("Reponse header field 'allow' not implemented");
+
+	if(*response->content_encoding)
+	{
+		sprintf(field_line, "Content-Encoding: %s\r\n", response->content_encoding);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->content_language)
+	{
+		sprintf(field_line, "Content-Language: %s\r\n", response->content_language);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(response->content_length != -1)
+	{
+		sprintf(field_line, "Content-Length: %i\r\n", response->content_length);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->content_location)
+	{
+		sprintf(field_line, "Content-Location: %s\r\n", response->content_location);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->content_md5)
+	{
+		sprintf(field_line, "Content-MD5: %s\r\n", response->content_md5);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->content_range)
+	{
+		sprintf(field_line, "Content-Range: %s\r\n", response->content_range);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(*response->content_type)
+	{
+		sprintf(field_line, "Content-Type: %s\r\n", response->content_type);
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(response->expires.tm_year != 0)
+	{
+		sprintf(field_line, "Expires: %s\r\n", http_date(&response->expires));
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+
+	if(response->last_modified.tm_year != 0)
+	{
+		sprintf(field_line, "Last-Modified: %s\r\n", http_date(&response->last_modified));
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+	
+	Rio_writen(fd, "\r\n", 2); /* On termine l'écriture du header */
 }

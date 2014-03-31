@@ -131,7 +131,7 @@ typedef struct {
 
 /* methods */
 
-enum{HTTP_METHOD_OPTIONS,
+enum{HTTP_METHOD_OPTIONS = 1,
 	HTTP_METHOD_GET,
 	HTTP_METHOD_HEAD,
 	HTTP_METHOD_POST,
@@ -161,6 +161,7 @@ enum{	ALLOW_GET,
 /* fills the request header according to the data read on fd */
 
 int http_request_read(int fd, http_request_t * request);
+void http_response_write(int fd, http_response_t *response);
 
 /* request headers fields names hash values according to djb2 function
  * defined in utils.c */
