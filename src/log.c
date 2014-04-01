@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include <stdlib.h>
+#include <sys/file.h>
 
 static void vlog(char * tag, char * message, va_list ap);
 
@@ -62,6 +63,16 @@ void log_error(char * message, ...)
 		vlog("ERROR", message, ap);
 		va_end(ap);
 	}
+}
+
+void log_unlock()
+{
+  flock(fileno(log_file), LOCK_EX);
+}
+
+void log_lock()
+{
+  flock(fileno(log_file), LOCK_UN);
 }
 
 static void vlog(char * tag, char * message, va_list ap)

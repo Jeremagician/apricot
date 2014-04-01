@@ -21,4 +21,10 @@ void log_error(char * message, ...);
 void log_set_level(int mask);
 void log_set_file(FILE* f);
 
+/* disable and enable the file
+ * by locking it */
+
+void log_unlock();
+void log_lock();
+
 #endif /* _LOG_ */
