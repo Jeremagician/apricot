@@ -20,10 +20,13 @@ void master_start(int port, char ** argv)
 {
 	int listenfd;
 
+	/* change process name */
+	
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
 	
 	/* open magic library */
+	
 	if(!(conf.magic = magic_open(MAGIC_MIME_TYPE)))
 	{
 	  log_error("failed to open libmagic");
@@ -31,11 +34,14 @@ void master_start(int port, char ** argv)
 	
 	magic_load(conf.magic, NULL);
 	
+	/* open socket */
+	
     listenfd = Open_listenfd(port);
 
 	/* init signals */
 	init_signals();
 
+	
 	pool_create(listenfd, POOL_SIZE);
 
 	log_info("Apricot web server started on port %i", port);
