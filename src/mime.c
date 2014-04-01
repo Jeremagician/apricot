@@ -1,9 +1,10 @@
 #include <apricot/mime.h>
 #include <apricot/conf.h>
 #include <apricot/log.h>
+#include <apricot/magic.h>
+
 #include <string.h>
 #include <stdlib.h>
-#include <magic.h>
 
 const char * mime_type(char * filename)
 {

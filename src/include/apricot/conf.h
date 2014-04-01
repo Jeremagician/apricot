@@ -1,7 +1,7 @@
 #ifndef _CONF_
 #define _CONF_
 
-#include <magic.h>
+#include <apricot/magic.h>
 
 #define ROOT_MAX 255
 #define NR_HOSTS 100

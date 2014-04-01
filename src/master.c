@@ -3,10 +3,10 @@
 #include <apricot/log.h>
 #include <apricot/csapp.h>
 #include <apricot/conf.h>
+#include <apricot/magic.h>
 
 #include <stdlib.h>
 #include <string.h>
-#include <magic.h>
 
 #define POOL_SIZE 16
 

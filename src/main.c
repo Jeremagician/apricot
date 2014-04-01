@@ -19,7 +19,7 @@ int main(int argc, char ** argv)
 {
 	int port = 0;
 	int opt;
-	int daemon = 0;
+	int daemon = 1;
 	FILE * log_file;
 	char * user_supplied_conf_filename = NULL;
 
@@ -41,7 +41,7 @@ int main(int argc, char ** argv)
 			break;
 
 			case 'd':
-				daemon = 1;
+				daemon = 0;
 			break;
 
 			case 'p':
@@ -117,7 +117,7 @@ int main(int argc, char ** argv)
 void print_help()
 {
 	printf("\nHelp\n");
-	printf("-d : launch the server as a daemon, logs are written in /tmp/apricot.log\n");
+	printf("-d : launch the server in debug mode, not as a daemon\n");
 	printf("-p <port> : listen port <port>, override settings in apricot.conf\n");
 	printf("-c <configuration file> : use the given configuration file\n");
 	printf("-v : display the current version of apricot\n");
