@@ -7,6 +7,7 @@
 
 #define PRINT_LOG_ACTION "printlog"
 #define TRUNCATE_LOG_ACTION "truncatelog"
+#define SERVER_STOP_ACTION "serverstop"
 
 static void send(mqd_t mq, char * msg);
 static void receive(mqd_t mq, char * msg);
@@ -71,6 +72,18 @@ int main()
 	  printf("</body>\n");
 	  printf("</html>\n");
 	}
+	else if(!strcmp(action, SERVER_STOP_ACTION))
+	{
+	  printf("<html><head><title>Apricot Admin Interface</title>\n");
+	  printf("</head>\n\n");
+	  printf("<body>\n");
+	  
+	  strcpy(msg, MQUEUE_STOP_SERVER);
+	  send(to_server, msg);
+	  
+	  printf("</body>\n");
+	  printf("</html>\n");
+	}
 	else
 	{
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
@@ -88,6 +101,7 @@ int main()
 	printf("<h1>Apricot administration interface</h1>\n");
 	printf("?action=printlog  print the log file\n");
 	printf("?action=truncatelog	 reset log file\n");
+	printf("?action=serverstop	 stop server\n");
 	printf("</body>\n");
 	printf("</html>\n");
   }

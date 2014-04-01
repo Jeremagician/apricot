@@ -74,6 +74,12 @@ void mqueue_start()
 			strcpy(message_buffer, MQUEUE_OK);
 			send(to_client, message_buffer);
 		}
+		else if(!strcmp(message_buffer, MQUEUE_STOP_SERVER))
+		{	
+			log_info("Apricot stop asked by admin interface");
+			master_stop();
+			exit(EXIT_SUCCESS);
+		}
 		else
 		{
 		   strcpy(message_buffer, MQUEUE_FAIL);
