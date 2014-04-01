@@ -379,9 +379,8 @@ void http_response_write(int fd, http_response_t *response)
 		Rio_writen(fd, field_line, strlen(field_line));
 	}
 
-	/* We add server name because we are proud of it */
-	if(!*response->server)
-		strcpy(response->server, SERVER_NAME);
+	/* We force server name because we are proud of it */
+	strcpy(response->server, SERVER_NAME);
 
 	sprintf(field_line, "Server: %s\r\n", response->server);
 	Rio_writen(fd, field_line, strlen(field_line));

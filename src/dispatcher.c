@@ -16,7 +16,6 @@ en global pour ne pas avoir à l'allouer sur la pile à chaque
 appel à dispatch */
 
 static http_request_t request;
-static http_response_t response;
 
 static int parse_uri(char *uri, char *filename, char *cgiargs);
 
@@ -29,7 +28,6 @@ void dispatch(int acceptfd, SA *client_addr)
 
 	/* fill request and response with zeros */
 	bzero(&request, sizeof(request));
-	bzero(&response, sizeof(response));
 
 	/* read request, exit if something goes wrong during
 	 request reading, error messages have been already sent
@@ -37,7 +35,10 @@ void dispatch(int acceptfd, SA *client_addr)
 	int req_result = http_request_read(acceptfd, &request);
 
 	if(req_result == -1)
+	{
+		close(acceptfd);
 		return;
+	}
 
 	rewrite(request.uri);
 

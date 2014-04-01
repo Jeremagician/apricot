@@ -38,6 +38,7 @@ void worker_start(int listenfd)
 		}
 		else if(errno == EINTR) /* Accept a été interrompu par SIGTERM, on sort donc de la boucle */
 			running = 0;
+
 	}
 	close(listenfd);
 	exit(EXIT_SUCCESS);
