@@ -13,14 +13,23 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, char * cookie_id)
 	char *emptylist[] = { NULL };
 	pid_t pid;
 	FILE* output;
+	char cookie_tmp[COOKIE_ID_MAX];
+	
+	strcpy(cookie_tmp, cookie_id);
 
+	if(strlen(cookie_tmp) == 0)
+	{
+	  cookie_create(cookie_tmp);
+	}
+	
 	output = tmpfile();
+	
 	if(output !=  NULL)
 	{
 		if ((pid = Fork()) == 0) { /* child */
 			/* Real server would set all CGI vars here */
 			setenv("QUERY_STRING", cgiargs, 1);
-			setenv("COOKIE", cookie_getfile(cookie_id), 1);
+			setenv("COOKIE", cookie_tmp, 1);
 			Dup2(fileno(output), STDOUT_FILENO);         /* Redirect stdout to client */
 			Execve(filename, emptylist, environ); /* Run CGI program */
 		}

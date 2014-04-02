@@ -79,6 +79,9 @@ void conf_read(const char * conf_filename)
 		exit(EXIT_FAILURE);
 	}
 	
+	strcpy(conf.cookie_root, conf.root);
+	strcat(conf.cookie_root, "/cookies");
+	
 	if(conf.nr_hosts == 0)
 	{
 		fprintf(stderr, "No host specified in apricot.conf\n");

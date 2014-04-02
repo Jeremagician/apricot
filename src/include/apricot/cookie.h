@@ -1,7 +1,8 @@
 #ifndef _COOKIE_
 #define _COOKIE_
 
-/* get the cookie file from the cookie id */
-char * cookie_getfile(char * cookie_id);
+#define COOKIE_ID_MAX 255
+
+void cookie_create(char * dest);
 
 #endif
