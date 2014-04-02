@@ -125,6 +125,7 @@ static void signal_handler(int sig)
 					{
 						http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
 						log_error("cgi output expected content-type header");
+						log_request(&cgi_table[i].request, HTTP_INTERNAL_ERROR);
 					}
 					else
 					{
@@ -140,6 +141,7 @@ static void signal_handler(int sig)
 						buf = mmap(0, sbuf.st_size-size, PROT_READ, MAP_PRIVATE, cgifd, 0);
 						Rio_writen(cgi_table[i].clientfd, buf+size, sbuf.st_size-size);
 						munmap(buf, sbuf.st_size-size);
+						log_request(&cgi_table[i].request, HTTP_OK);
 					}
 				}
 				/* On ferme les descripteur de fichiers et on enlève le cgi de la table */
@@ -197,4 +199,18 @@ static inline int check_pending(int sig)
 
 	sigpending(&set);
    	return sigismember(&set, sig);
+}
+
+
+void log_request(http_request_t *request, int http_code)
+{
+	log_info("%s %s HTTP %i.%i %s %s %i",
+			 HTTP_METHOD_STR(request->method),
+			 request->uri,
+			 request->http_version_major,
+			 request->http_version_minor,
+			 straddr(request->client_address),
+			 get_client_hostname(request->client_address),
+			 http_code
+			);
 }

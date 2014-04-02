@@ -1,4 +1,5 @@
 #include <apricot/log.h>
+#include <apricot/utils.h>
 #include <stdio.h>
 #include <time.h>
 #include <assert.h>

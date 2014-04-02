@@ -9,6 +9,7 @@
 #include <apricot/conf.h>
 #include <apricot/utils.h>
 #include <apricot/log.h>
+#include <apricot/worker.h>
 #include <strings.h>
 
 /* on met la structure qui représente le header d'une requete
@@ -56,32 +57,21 @@ void dispatch(int acceptfd, SA *client_addr)
 		if(is_static)
 		{
 			if (!(S_ISREG(fs.st_mode)) || !(S_IRUSR & fs.st_mode))
-				http_code = HTTP_FORBIDDEN;
+				http_clienterror(acceptfd, HTTP_FORBIDDEN, HTTP_STR(HTTP_FORBIDDEN));
 			else
+			{
 				http_code = static_serve(acceptfd, filename);
+				log_request(&request, http_code);
+			}
+			close(acceptfd);
 		}
 		else
 		{
 			if (!(S_ISREG(fs.st_mode)) || !(S_IXUSR & fs.st_mode))
-				http_code = HTTP_FORBIDDEN;
+				http_clienterror(acceptfd, HTTP_FORBIDDEN, HTTP_STR(HTTP_FORBIDDEN));
 			else
-				http_code = dynamic_serve(acceptfd, filename, cgiargs, request.cookie_id);
+				http_code = dynamic_serve(acceptfd, filename, cgiargs, &request);
 		}
-	}
-
-	log_info("GET %s HTTP %i.%i %s %s %i",
-			  request.uri,
-			  request.http_version_major,
-			  request.http_version_minor,
-			  straddr(request.client_address),
-			  get_client_hostname(request.client_address),
-			  http_code
-			);
-
-	if(http_code != HTTP_OK)
-	{
-		http_clienterror(acceptfd, http_code, HTTP_STR(http_code));
-		close(acceptfd);
 	}
 }
 
