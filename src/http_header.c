@@ -68,6 +68,7 @@ int http_request_read(int fd, http_request_t * request)
 		[HASH_CONTENT_TYPE] = &&content_type,
 		[HASH_EXPIRES] = &&expires,
 		[HASH_LAST_MODIFIED] = &&last_modified,
+		[HASH_COOKIE] = &&cookie,
 		&&not_supported
 	};
 
@@ -190,6 +191,10 @@ int http_request_read(int fd, http_request_t * request)
 
 		content_type :
 			strncpy(request->content_type, content, CONTENT_TYPE_MAX);
+			goto fetch;
+			
+		cookie :
+			strncpy(request->cookie_id, content, COOKIE_ID_MAX);
 			goto fetch;
 
 		expires :

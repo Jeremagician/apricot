@@ -3,11 +3,12 @@
 #include <apricot/http_codes.h>
 #include <apricot/log.h>
 #include <apricot/worker.h>
+#include <apricot/cookie.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int dynamic_serve(int fd, char * filename, char * cgiargs)
+int dynamic_serve(int fd, char * filename, char * cgiargs, char * cookie_id)
 {
 	char *emptylist[] = { NULL };
 	pid_t pid;
@@ -19,6 +20,7 @@ int dynamic_serve(int fd, char * filename, char * cgiargs)
 		if ((pid = Fork()) == 0) { /* child */
 			/* Real server would set all CGI vars here */
 			setenv("QUERY_STRING", cgiargs, 1);
+			setenv("COOKIE", cookie_getfile(cookie_id), 1);
 			Dup2(fileno(output), STDOUT_FILENO);         /* Redirect stdout to client */
 			Execve(filename, emptylist, environ); /* Run CGI program */
 		}

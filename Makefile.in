@@ -100,6 +100,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(apricotconfdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_bin_apricot_OBJECTS = src/bin_apricot-conf.$(OBJEXT) \
+	src/bin_apricot-cookie.$(OBJEXT) \
 	src/bin_apricot-csapp.$(OBJEXT) \
 	src/bin_apricot-dispatcher.$(OBJEXT) \
 	src/bin_apricot-dynamic.$(OBJEXT) \
@@ -338,7 +339,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_apricot_SOURCES = src/conf.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_error.c src/http_header.c src/include/apricot/conf.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_error.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/magic.h src/include/apricot/master.h src/include/apricot/mime.h src/include/apricot/mqueue.h src/include/apricot/pool.h src/include/apricot/rewrite.h src/include/apricot/static.h src/include/apricot/utils.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/mime.c src/mqueue.c src/pool.c src/rewrite.c src/static.c src/utils.c src/worker.c 
+bin_apricot_SOURCES = src/conf.c src/cookie.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_error.c src/http_header.c src/include/apricot/conf.h src/include/apricot/cookie.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_error.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/magic.h src/include/apricot/master.h src/include/apricot/mime.h src/include/apricot/mqueue.h src/include/apricot/pool.h src/include/apricot/rewrite.h src/include/apricot/static.h src/include/apricot/utils.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/mime.c src/mqueue.c src/pool.c src/rewrite.c src/static.c src/utils.c src/worker.c 
 bin_apricot_LDFLAGS = -lpthread `find /usr/lib -name libmagic.so* -type f` -lrt
 bin_apricot_CFLAGS = -Wall -Werror -O3 -Isrc/include
 apricotconfdir = $(sysconfdir)/apricot
@@ -456,6 +457,8 @@ src/$(DEPDIR)/$(am__dirstamp):
 	@: > src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-conf.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/bin_apricot-cookie.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-csapp.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-dispatcher.$(OBJEXT): src/$(am__dirstamp) \
@@ -536,6 +539,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/csapp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/traceroute.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-conf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-cookie.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-csapp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-dispatcher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-dynamic.Po@am__quote@
@@ -581,6 +585,20 @@ src/bin_apricot-conf.obj: src/conf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/conf.c' object='src/bin_apricot-conf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-conf.obj `if test -f 'src/conf.c'; then $(CYGPATH_W) 'src/conf.c'; else $(CYGPATH_W) '$(srcdir)/src/conf.c'; fi`
+
+src/bin_apricot-cookie.o: src/cookie.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-cookie.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-cookie.Tpo -c -o src/bin_apricot-cookie.o `test -f 'src/cookie.c' || echo '$(srcdir)/'`src/cookie.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-cookie.Tpo src/$(DEPDIR)/bin_apricot-cookie.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/cookie.c' object='src/bin_apricot-cookie.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-cookie.o `test -f 'src/cookie.c' || echo '$(srcdir)/'`src/cookie.c
+
+src/bin_apricot-cookie.obj: src/cookie.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-cookie.obj -MD -MP -MF src/$(DEPDIR)/bin_apricot-cookie.Tpo -c -o src/bin_apricot-cookie.obj `if test -f 'src/cookie.c'; then $(CYGPATH_W) 'src/cookie.c'; else $(CYGPATH_W) '$(srcdir)/src/cookie.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-cookie.Tpo src/$(DEPDIR)/bin_apricot-cookie.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/cookie.c' object='src/bin_apricot-cookie.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-cookie.obj `if test -f 'src/cookie.c'; then $(CYGPATH_W) 'src/cookie.c'; else $(CYGPATH_W) '$(srcdir)/src/cookie.c'; fi`
 
 src/bin_apricot-csapp.o: src/csapp.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-csapp.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-csapp.Tpo -c -o src/bin_apricot-csapp.o `test -f 'src/csapp.c' || echo '$(srcdir)/'`src/csapp.c

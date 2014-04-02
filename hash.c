@@ -56,6 +56,7 @@ int main()
 	printf("#define HASH_CONTENT_TYPE %i\n", hash("content-type")%1000);
 	printf("#define HASH_EXPIRES %i\n", hash("expires")%1000);
 	printf("#define HASH_LAST_MODIFIED %i\n", hash("last-modified")%1000);
+	printf("#define HASH_COOKIE %i\n", hash("cookie")%1000);
 	
 	return 0;
 }

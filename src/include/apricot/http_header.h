@@ -19,6 +19,7 @@
 #define CONTENT_MD5_MAX 255
 #define CONTENT_RANGE_MAX 80
 #define CONTENT_TYPE_MAX 80
+#define COOKIE_ID_MAX 255
 #define ETAG_MAX 80
 #define EXPECTATION_MAX 80
 #define FROM_MAX 80
@@ -84,6 +85,8 @@ typedef struct {
 	char content_type[CONTENT_TYPE_MAX];
 	struct tm expires;
 	struct tm last_modified;
+	
+	char cookie_id[COOKIE_ID_MAX];
 
 } http_request_t;
 
@@ -209,6 +212,6 @@ void http_response_default(http_response_t *response, int http_major, int http_m
 #define HASH_CONTENT_TYPE 210
 #define HASH_EXPIRES 984
 #define HASH_LAST_MODIFIED 634
-
+#define HASH_COOKIE 234
 
 #endif

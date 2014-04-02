@@ -14,6 +14,7 @@
 /* Prototypes */
 static void signal_handler(int sig);
 static void init_signals();
+static void master_unlock();
 
 char ** arguments;
 
@@ -51,13 +52,18 @@ void master_start(int port, char ** argv)
 	mqueue_start();
 }
 
+static void master_unlock()
+{
+	unlink(LOCK_FILE);
+}
+
 void master_stop()
 {
 	pool_destroy();
 	magic_close(conf.magic);
 	mqueue_stop();
 	log_info("Apricot admin interface closed");
-	unlink(LOCK_FILE);
+	atexit(master_unlock);
 	log_info("Apricot web server stopped");
 }
 

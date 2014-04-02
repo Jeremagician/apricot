@@ -65,7 +65,7 @@ void dispatch(int acceptfd, SA *client_addr)
 			if (!(S_ISREG(fs.st_mode)) || !(S_IXUSR & fs.st_mode))
 				http_code = HTTP_FORBIDDEN;
 			else
-				http_code = dynamic_serve(acceptfd, filename, cgiargs);
+				http_code = dynamic_serve(acceptfd, filename, cgiargs, request.cookie_id);
 		}
 	}
 
