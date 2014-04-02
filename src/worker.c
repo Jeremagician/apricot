@@ -27,9 +27,9 @@ void worker_start(int listenfd)
 	{
 		confd = worker_accept(listenfd, (SA *)&client_addr, (socklen_t*)&client_len);
 
-		if(confd != -1)
+		if(confd != -1) /* Un client s'est connecté (descripteur de fichier valide) */
 		{
-			worker_lock();
+			worker_lock(); /* On rend le worker insensible au sigaux pour server totalement le client */
 			dispatch(confd, (SA *)&client_addr); /* Confd is closed by the dispatch function */
 			worker_unlock();
 
@@ -171,7 +171,7 @@ static inline int check_pending(int sig)
 {
 	/* On regarde si l'on a reçu un signal pendant le lock */
 	sigset_t set;
-	sigpending(&set);
 
+	sigpending(&set);
    	return sigismember(&set, sig);
 }
