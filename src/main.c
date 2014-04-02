@@ -12,8 +12,9 @@
 #define APRICOT_VERSION 0.1
 
 /* Prototypes */
-void print_help();
-void daemonize();
+static void print_help();
+static void daemonize();
+static void unlock();
 
 int main(int argc, char ** argv)
 {
@@ -29,6 +30,8 @@ int main(int argc, char ** argv)
 		fprintf(stderr, "Apricot is already running.\n");
 		exit(EXIT_FAILURE);
 	}
+	
+	atexit(unlock);
 
     while((opt = getopt(argc, argv, "dp:vhc:")) != -1)
 	{
@@ -116,7 +119,7 @@ int main(int argc, char ** argv)
 	return EXIT_SUCCESS;
 }
 
-void print_help()
+static void print_help()
 {
 	printf("\nHelp\n");
 	printf("-d : launch the server in debug mode, not as a daemon\n");
@@ -127,7 +130,7 @@ void print_help()
 	putchar('\n');
 }
 
-void daemonize()
+static void daemonize()
 {
 	pid_t pid = fork();
 
@@ -171,4 +174,9 @@ void daemonize()
 	fclose(stderr);
 	fclose(stdout);
 	fclose(stdin);
+}
+
+static void unlock()
+{
+  unlink(LOCK_FILE);
 }
