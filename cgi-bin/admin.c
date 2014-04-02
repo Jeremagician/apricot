@@ -19,15 +19,15 @@ int main()
   char msg[MQUEUE_BUFFER_SIZE];
   mqd_t to_server;
   mqd_t from_server;
-  
+
   to_server = mq_open(MQUEUE_SERVER, O_WRONLY);
   from_server = mq_open(MQUEUE_CLIENT, O_RDONLY);
-  
+
   if(to_server == -1 || from_server == -1)
 	return EXIT_FAILURE;
 
   printf("Content-type: text/html\n");
-  
+
   if ((buf = getenv("QUERY_STRING")) != NULL && *buf && sscanf(buf, "action=%79s", action) == 1)
   {
 	if(!strcmp(action, PRINT_LOG_ACTION))
@@ -36,20 +36,20 @@ int main()
 	  printf("<meta http-equiv=\"refresh\" content=\"20\"> \n");
 	  printf("</head>\n\n");
 	  printf("<body>\n");
-	  
+
 	  strcpy(msg, MQUEUE_SEND_LOG);
 	  send(to_server, msg);
-	  
+
 	  printf("<h1>Apricot server log</h1>\n");
-	  
+
 	  receive(from_server, msg);
-	  
+
 	  while(strcmp(msg, MQUEUE_OK) && strcmp(msg, MQUEUE_FAIL))
 	  {
 		printf("<p>%s</p>", msg);
 		receive(from_server, msg);
 	  }
-	  
+
 	  printf("</body>\n");
 	  printf("</html>\n");
 	}
@@ -58,11 +58,11 @@ int main()
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
 	  printf("</head>\n\n");
 	  printf("<body>\n");
-	  
+
 	  strcpy(msg, MQUEUE_TRUNCATE_LOG);
 	  send(to_server, msg);
 	  receive(from_server, msg);
-	  
+
 	  if(!strcmp(msg, MQUEUE_OK))
 	  {
 		printf("<h1>Log file reset done</h1>\n");
@@ -71,7 +71,7 @@ int main()
 	  {
 		printf("<h1>Log file reset failed</h1>\n");
 	  }
-	  
+
 	  printf("</body>\n");
 	  printf("</html>\n");
 	}
@@ -80,10 +80,10 @@ int main()
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
 	  printf("</head>\n\n");
 	  printf("<body>\n");
-	  
+
 	  strcpy(msg, MQUEUE_STOP_SERVER);
 	  send(to_server, msg);
-	  
+	  printf("<h1 style=\"color:red;\"> Server stopped</h1>\n");
 	  printf("</body>\n");
 	  printf("</html>\n");
 	}
@@ -104,11 +104,11 @@ int main()
 	printf("<h1>Apricot administration interface</h1>\n");
 	printf("</br><a href=\"?action=printlog\">Print the log file</a>\n");
 	printf("</br><a href=\"?action=truncatelog\">Reset log file</a>\n");
-	printf("</br><a href=\"action=serverstop\">Stop server</a>\n");
+	printf("</br><a href=\"?action=serverstop\">Stop server</a>\n");
 	printf("</body>\n");
 	printf("</html>\n");
   }
-  
+
   fflush(stdout);
   return EXIT_SUCCESS;
 }

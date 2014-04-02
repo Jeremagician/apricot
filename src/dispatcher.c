@@ -50,7 +50,8 @@ void dispatch(int acceptfd, SA *client_addr)
 	is_static = parse_uri(request.uri, filename, cgiargs);
 
 	if (stat(filename, &fs) < 0) {
-		http_code = HTTP_NOT_FOUND;
+		http_clienterror(acceptfd, HTTP_NOT_FOUND, HTTP_STR(HTTP_NOT_FOUND));
+		close(acceptfd);
 	}
 	else
 	{

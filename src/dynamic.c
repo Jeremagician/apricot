@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/poll.h>
 
 int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *request)
 {
@@ -23,17 +24,24 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *reque
 	{
 	  strcpy(cookie_tmp, request->cookie_id);
 	}
-	
+
 	output = tmpfile();
-	
+
 	if(output !=  NULL)
 	{
 		if ((pid = Fork()) == 0) { /* child */
-			/* Real server would set all CGI vars here */
 			setenv("QUERY_STRING", cgiargs, 1);
 			setenv("COOKIE", cookie_tmp, 1);
 
-			Dup2(fileno(output), STDOUT_FILENO);         /* Redirect stdout to client */
+			if(request->method == HTTP_METHOD_POST)
+			{
+				char content_length[32];
+				sprintf(content_length, "%i", request->content_length);
+				setenv("CONTENT_LENGTH", content_length, 1);
+				Dup2(fd, STDIN_FILENO);
+			}
+
+			Dup2(fileno(output), STDOUT_FILENO); /* Redirect stdout to client */
 			Execve(filename, emptylist, environ); /* Run CGI program */
 		}
 		else
