@@ -53,7 +53,6 @@ void pool_create(int lfd, int psize)
 void pool_destroy()
 {
 	int i;
-
 	reincarnate_stop();
 
 	for(i = 0; i < pool_size; i++)
@@ -63,7 +62,7 @@ void pool_destroy()
 	}
 
 	while(waitpid(-1, NULL, 0) > 0); /* On attend la terminaison de tout les fils */
-	free(pool);
+    free(pool);
 }
 
 void pool_resize(int new_size)
@@ -144,7 +143,6 @@ static void signal_handler(int sig)
 			  On ne réincarne le fils, uniquement si il est dans la pool.
 			  Ainsi on ne réincarne pas les fils tué lors d'un resize_pool
 			 */
-
 			while (i < pool_size) {
 				if(pool[i] == pid)
 				{

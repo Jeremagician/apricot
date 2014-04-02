@@ -91,9 +91,11 @@ int main(int argc, char ** argv)
 	if(daemon)
 	{
 		daemonize();
+		log_file = fopen(conf.log_file, "a+");
 	}
+	else
+		log_file = stdout;
 
-	log_file = fopen(conf.log_file, "a+");
 
 	if(!log_file)
 	{

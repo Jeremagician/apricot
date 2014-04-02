@@ -26,6 +26,12 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, char * cookie_id)
 		}
 		else
 		{
+			/*
+			  On ajoute à la table des cgi les informations
+			  sur le cgi que l'on viens de lancer.
+			  Le worker actuel va donc pouvoir traiter d'autre requetes
+			  pendant l'execution du cgi
+			 */
 			log_debug("cgi pid = %i started", pid);
 			cgi_table[cgi_table_size].cgifile = output;
 			cgi_table[cgi_table_size].clientfd = fd;
