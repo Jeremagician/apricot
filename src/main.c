@@ -145,18 +145,12 @@ static void daemonize()
 
 	/* On crée une nouvelle session dont on devient le leader.
 	On est à présent détaché du terminal de contrôle */
-	if(setsid() == -1)
+	
+	do
 	{
-		fprintf(stderr, "Failed to daemonize, setsid failed\n");
-		exit(EXIT_FAILURE);
+	  setsid();
 	}
-
-	/* On vérifie que notre père est bien init */
-	if(getppid() != 1)
-	{
-		fprintf(stderr, "Failed to daemonize, not child process of init\n");
-		exit(EXIT_FAILURE);
-	}
+	while(getppid()!=1);
 
 	/* On doit changer de répertoire courant pour ne plus dépendre
 	d'un répertoire utilisateur, on choisit la racine pour le moment */
