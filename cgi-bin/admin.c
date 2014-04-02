@@ -25,6 +25,8 @@ int main()
   
   if(to_server == -1 || from_server == -1)
 	return EXIT_FAILURE;
+
+  printf("Content-type: text/html\n");
   
   if ((buf = getenv("QUERY_STRING")) != NULL && *buf && sscanf(buf, "action=%79s", action) == 1)
   {

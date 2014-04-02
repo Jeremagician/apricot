@@ -1,5 +1,6 @@
 #include <apricot/worker.h>
 #include <apricot/csapp.h>
+#include <apricot/utils.h>
 #include <apricot/dispatcher.h>
 #include <apricot/log.h>
 #include <apricot/http_header.h>
@@ -105,19 +106,41 @@ static void signal_handler(int sig)
 					struct stat sbuf;
 					http_response_t response;
 					int cgifd = fileno(cgi_table[i].cgifile);
+					rio_t rio;
+					char line[MAXLINE];
+					char *field, *content;
+					int size;
+					(void)size;
+					
+					lseek(cgifd, 0, SEEK_SET);
+					Rio_readinitb(&rio, cgifd);
+					size = Rio_readlineb(&rio, line, MAXLINE);
 
-					fstat(cgifd, &sbuf);
+					field = strtok(line, ":");
+					content = strtok(NULL, ":");
+					content[strlen(content)-1] = 0;
+					strlower(field);
+					
+					if(strcmp(field, "content-type"))
+					{
+						http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
+						log_error("cgi output expected content-type header");
+					}
+					else
+					{
+						fstat(cgifd, &sbuf);
 
-					/* On crée notre entête http */
-					http_response_default(&response, 1, 0, HTTP_OK);
-					strcpy(response.content_type, "text/plain");
-					response.content_length = (int)sbuf.st_size;
-					http_response_write(cgi_table[i].clientfd, &response);
+						/* On crée notre entête http */
+						http_response_default(&response, 1, 0, HTTP_OK);
+						strcpy(response.content_type, content);
+						response.content_length = (int)sbuf.st_size-size;
+						http_response_write(cgi_table[i].clientfd, &response);
 
-					/* On map le fichier sortie */
-					buf = mmap(0, sbuf.st_size, PROT_READ, MAP_PRIVATE, cgifd, 0);
-					Rio_writen(cgi_table[i].clientfd, buf, sbuf.st_size);
-					munmap(buf, sbuf.st_size);
+						/* On map le fichier sortie */
+						buf = mmap(0, sbuf.st_size-size, PROT_READ, MAP_PRIVATE, cgifd, 0);
+						Rio_writen(cgi_table[i].clientfd, buf+size, sbuf.st_size-size);
+						munmap(buf, sbuf.st_size-size);
+					}
 				}
 				/* On ferme les descripteur de fichiers et on enlève le cgi de la table */
 				fclose(cgi_table[i].cgifile);

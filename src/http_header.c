@@ -115,7 +115,7 @@ int http_request_read(int fd, http_request_t * request)
 		 */
 
     	field = strtok(buf, ":");
-    	content = strtok(NULL, ": ");
+    	content = strtok(NULL, ":");
 		strlower(field);
 
 		/* Dispatch chaque nom de champ vers le code de remplissage
