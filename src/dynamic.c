@@ -18,10 +18,19 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *reque
 	if(output !=  NULL)
 	{
 		if ((pid = Fork()) == 0) { /* child */
-			/* Real server would set all CGI vars here */
 			setenv("QUERY_STRING", cgiargs, 1);
 			setenv("COOKIE", cookie_getfile(request->cookie_id), 1);
-			Dup2(fileno(output), STDOUT_FILENO);         /* Redirect stdout to client */
+			
+			if(request->method == HTTP_METHOD_POST)
+			{
+				char content_length[32];
+				printf("%s", request->content_type);
+				sprintf(content_length, "%i", request->content_length);
+				setenv("CONTENT_LENGTH", content_length, 1);
+				Dup2(fd, STDIN_FILENO);
+			}
+			
+			Dup2(fileno(output), STDOUT_FILENO); /* Redirect stdout to client */
 			Execve(filename, emptylist, environ); /* Run CGI program */
 		}
 		else

@@ -84,14 +84,16 @@ int http_request_read(int fd, http_request_t * request)
 	}
 
 	/* method */
-	if(strcasecmp(method, "GET"))
+	if(!strcasecmp(method, "GET"))
+		request->method = HTTP_METHOD_GET;
+	else if(!strcasecmp(method, "POST"))
+		request->method = HTTP_METHOD_POST;
+	else
 	{
 		http_clienterror(fd, HTTP_NOT_IMPLEMENTED, "Apricot does not implement his method");
 		return -1;
 	}
-
-	request->method = HTTP_METHOD_GET;
-
+	
 	/* check http version number */
 	if(request->http_version_major < 0 || request->http_version_minor < 0
 		|| request->http_version_major > 9 || request->http_version_minor > 9)
@@ -106,7 +108,7 @@ int http_request_read(int fd, http_request_t * request)
 	/* read other headers */
 	Rio_readlineb(&rio, buf, BUF_SIZE);
 
-    while (!(buf[0] == '\r' && buf[1] == '\n') && buf[0] != '\n')
+    while (!(buf[0] == '\r' && buf[1] == '\n'))
     {
     	/* Lit chaque header */
     	/* Chaque header est composé d'un champ et d'un contenu séparé par ':'
