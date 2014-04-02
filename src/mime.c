@@ -19,3 +19,23 @@ const char * mime_type(char * filename)
 	
 	return type;
 }
+
+/* open magic library */
+int mime_init()
+{
+	if(!(conf.magic = magic_open(MAGIC_MIME_TYPE)))
+	{
+	  log_error("failed to open libmagic");
+	  return -1;
+	}
+	
+	if(magic_load(conf.magic, NULL) == -1)
+		return -1;
+		
+	return 0;
+}
+
+void mime_close()
+{
+	magic_close(conf.magic);
+}

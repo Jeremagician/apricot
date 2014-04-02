@@ -16,7 +16,6 @@
 		char hosts_root[NR_HOSTS][HOST_NAME_MAX];
 		int nr_hosts;
 		char log_file[LOG_MAX];
-		char cookie_root[COOKIE_ID_MAX+	ROOT_MAX];
 		
 		/* libmagic cookie for mime types */
 		magic_t magic;

@@ -2,6 +2,8 @@
 #define _WORKER_H_
 
 #include <apricot/csapp.h>
+#include <apricot/http_header.h>
+#include <apricot/cookie.h>
 
 /*
   Le module worker sert essentiellement à empêcher l'accès
@@ -23,9 +25,12 @@ typedef struct cgi_t
 	pid_t pid;
 	int clientfd;
     FILE* cgifile;
+	http_request_t request;
+	char cookie_id[COOKIE_ID_MAX];
 } cgi_t;
 
 cgi_t cgi_table[MAX_CGI];
 extern int cgi_table_size;
+void log_request(http_request_t *request, int http_code);
 
 #endif /* _WORKER_H_ */

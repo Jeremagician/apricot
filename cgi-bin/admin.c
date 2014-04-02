@@ -33,6 +33,7 @@ int main()
 	if(!strcmp(action, PRINT_LOG_ACTION))
 	{
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
+	  printf("<meta http-equiv=\"refresh\" content=\"20\"> \n");
 	  printf("</head>\n\n");
 	  printf("<body>\n");
 	  
@@ -101,9 +102,9 @@ int main()
 	printf("<html><head><title>Apricot Admin Interface</title></head>\n\n");
 	printf("<body>\n");
 	printf("<h1>Apricot administration interface</h1>\n");
-	printf("?action=printlog  print the log file\n");
-	printf("?action=truncatelog	 reset log file\n");
-	printf("?action=serverstop	 stop server\n");
+	printf("</br><a href=\"?action=printlog\">Print the log file</a>\n");
+	printf("</br><a href=\"?action=truncatelog\">Reset log file</a>\n");
+	printf("</br><a href=\"action=serverstop\">Stop server</a>\n");
 	printf("</body>\n");
 	printf("</html>\n");
   }

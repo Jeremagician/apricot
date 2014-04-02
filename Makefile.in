@@ -79,7 +79,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = bin/apricot$(EXEEXT) bin/sites/cgi-bin/adder$(EXEEXT) \
 	bin/sites/cgi-bin/traceroute$(EXEEXT) \
-	bin/sites/cgi-bin/admin$(EXEEXT)
+	bin/sites/cgi-bin/admin$(EXEEXT) \
+	bin/sites/cgi-bin/cookie$(EXEEXT)
 subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -133,6 +134,12 @@ bin_sites_cgi_bin_admin_OBJECTS =  \
 bin_sites_cgi_bin_admin_LDADD = $(LDADD)
 bin_sites_cgi_bin_admin_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(bin_sites_cgi_bin_admin_LDFLAGS) $(LDFLAGS) -o $@
+am_bin_sites_cgi_bin_cookie_OBJECTS = cgi-bin/cookie.$(OBJEXT)
+bin_sites_cgi_bin_cookie_OBJECTS =  \
+	$(am_bin_sites_cgi_bin_cookie_OBJECTS)
+bin_sites_cgi_bin_cookie_LDADD = $(LDADD)
+bin_sites_cgi_bin_cookie_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(bin_sites_cgi_bin_cookie_LDFLAGS) $(LDFLAGS) -o $@
 am_bin_sites_cgi_bin_traceroute_OBJECTS =  \
 	cgi-bin/traceroute.$(OBJEXT) cgi-bin/csapp.$(OBJEXT)
 bin_sites_cgi_bin_traceroute_OBJECTS =  \
@@ -174,10 +181,12 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(bin_apricot_SOURCES) $(bin_sites_cgi_bin_adder_SOURCES) \
 	$(bin_sites_cgi_bin_admin_SOURCES) \
+	$(bin_sites_cgi_bin_cookie_SOURCES) \
 	$(bin_sites_cgi_bin_traceroute_SOURCES)
 DIST_SOURCES = $(bin_apricot_SOURCES) \
 	$(bin_sites_cgi_bin_adder_SOURCES) \
 	$(bin_sites_cgi_bin_admin_SOURCES) \
+	$(bin_sites_cgi_bin_cookie_SOURCES) \
 	$(bin_sites_cgi_bin_traceroute_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -351,6 +360,8 @@ bin_sites_cgi_bin_traceroute_SOURCES = cgi-bin/traceroute.c cgi-bin/csapp.c cgi-
 bin_sites_cgi_bin_traceroute_LDFLAGS = -lpthread
 bin_sites_cgi_bin_admin_SOURCES = cgi-bin/admin.c cgi-bin/csapp.c cgi-bin/csapp.h
 bin_sites_cgi_bin_admin_LDFLAGS = -lpthread -lrt
+bin_sites_cgi_bin_cookie_SOURCES = cgi-bin/cookie.c
+bin_sites_cgi_bin_cookie_LDFLAGS = -lrt
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = subdir-objects
 all: config.h
@@ -519,6 +530,12 @@ cgi-bin/admin.$(OBJEXT): cgi-bin/$(am__dirstamp) \
 bin/sites/cgi-bin/admin$(EXEEXT): $(bin_sites_cgi_bin_admin_OBJECTS) $(bin_sites_cgi_bin_admin_DEPENDENCIES) $(EXTRA_bin_sites_cgi_bin_admin_DEPENDENCIES) bin/sites/cgi-bin/$(am__dirstamp)
 	@rm -f bin/sites/cgi-bin/admin$(EXEEXT)
 	$(AM_V_CCLD)$(bin_sites_cgi_bin_admin_LINK) $(bin_sites_cgi_bin_admin_OBJECTS) $(bin_sites_cgi_bin_admin_LDADD) $(LIBS)
+cgi-bin/cookie.$(OBJEXT): cgi-bin/$(am__dirstamp) \
+	cgi-bin/$(DEPDIR)/$(am__dirstamp)
+
+bin/sites/cgi-bin/cookie$(EXEEXT): $(bin_sites_cgi_bin_cookie_OBJECTS) $(bin_sites_cgi_bin_cookie_DEPENDENCIES) $(EXTRA_bin_sites_cgi_bin_cookie_DEPENDENCIES) bin/sites/cgi-bin/$(am__dirstamp)
+	@rm -f bin/sites/cgi-bin/cookie$(EXEEXT)
+	$(AM_V_CCLD)$(bin_sites_cgi_bin_cookie_LINK) $(bin_sites_cgi_bin_cookie_OBJECTS) $(bin_sites_cgi_bin_cookie_LDADD) $(LIBS)
 cgi-bin/traceroute.$(OBJEXT): cgi-bin/$(am__dirstamp) \
 	cgi-bin/$(DEPDIR)/$(am__dirstamp)
 
@@ -536,6 +553,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/adder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/admin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/cookie.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/csapp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cgi-bin/$(DEPDIR)/traceroute.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-conf.Po@am__quote@

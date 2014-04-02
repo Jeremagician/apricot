@@ -2,6 +2,7 @@
 src/*.o
 *~
 /bin/apricot
+/bin/cookies/*
 /bin/sites/cgi-bin/*
 apricot.log
 autom4te.cache

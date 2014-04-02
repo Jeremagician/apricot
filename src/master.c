@@ -3,8 +3,8 @@
 #include <apricot/log.h>
 #include <apricot/csapp.h>
 #include <apricot/conf.h>
-#include <apricot/magic.h>
 #include <apricot/mqueue.h>
+#include <apricot/mime.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -26,16 +26,9 @@ void master_start(int port, char ** argv)
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
 	
-	/* open magic library */
 	/* Aucun fils n'a été créé, on peut donc quitter immediatement le programme */
-	
-	if(!(conf.magic = magic_open(MAGIC_MIME_TYPE)))
-	{
-	  log_error("failed to open libmagic");
-	  exit(EXIT_FAILURE);
-	}
-	
-	magic_load(conf.magic, NULL);
+	if(mime_init() < 0)
+		exit(EXIT_FAILURE);
 	
 	/* open socket */
     listenfd = Open_listenfd(port);
@@ -54,9 +47,12 @@ void master_start(int port, char ** argv)
 void master_stop()
 {
 	pool_destroy();
-	magic_close(conf.magic);
+	mime_close();
 	mqueue_stop();
 	log_info("Apricot admin interface closed");
+	
+  	unlink(LOCK_FILE);
+	
 	log_info("Apricot web server stopped");
 }
 

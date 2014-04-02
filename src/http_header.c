@@ -194,7 +194,7 @@ int http_request_read(int fd, http_request_t * request)
 			goto fetch;
 			
 		cookie :
-			strncpy(request->cookie_id, content, COOKIE_ID_MAX);
+			sscanf(content, "%254s", request->cookie_id);
 			goto fetch;
 
 		expires :
@@ -496,6 +496,12 @@ void http_response_write(int fd, http_response_t *response)
 	if(response->expires.tm_year != 0)
 	{
 		sprintf(field_line, "Expires: %s\r\n", http_date(&response->expires));
+		Rio_writen(fd, field_line, strlen(field_line));
+	}
+	
+	if(*response->cookie_id)
+	{
+		sprintf(field_line, "Set-Cookie: %s\r\n", response->cookie_id);
 		Rio_writen(fd, field_line, strlen(field_line));
 	}
 

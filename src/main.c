@@ -14,7 +14,6 @@
 /* Prototypes */
 static void print_help();
 static void daemonize();
-static void unlock();
 
 int main(int argc, char ** argv)
 {
@@ -30,8 +29,6 @@ int main(int argc, char ** argv)
 		fprintf(stderr, "Apricot is already running.\n");
 		exit(EXIT_FAILURE);
 	}
-	
-	atexit(unlock);
 
     while((opt = getopt(argc, argv, "dp:vhc:")) != -1)
 	{
@@ -99,7 +96,6 @@ int main(int argc, char ** argv)
 	else
 		log_file = stdout;
 
-
 	if(!log_file)
 	{
 		fprintf(stderr, "Failed to create log file %s\n", conf.log_file);
@@ -160,17 +156,9 @@ static void daemonize()
 		exit(EXIT_FAILURE);
 	}
 
-	/* On change l'umask */
-	umask(0);
-
 	/* on ferme les fichiers standards pour ne plus dépendre du
 	terminal de contrôle */
 	fclose(stderr);
 	fclose(stdout);
 	fclose(stdin);
-}
-
-static void unlock()
-{
-  unlink(LOCK_FILE);
 }

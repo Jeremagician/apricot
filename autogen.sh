@@ -1,6 +1,6 @@
  #!/bin/sh
 
-echo -n 'bin_PROGRAMS = bin/apricot bin/sites/cgi-bin/adder bin/sites/cgi-bin/traceroute bin/sites/cgi-bin/admin' > Makefile.am
+echo -n 'bin_PROGRAMS = bin/apricot bin/sites/cgi-bin/adder bin/sites/cgi-bin/traceroute bin/sites/cgi-bin/admin bin/sites/cgi-bin/cookie' > Makefile.am
 
 echo ' ' >> Makefile.am
 echo -n 'bin_apricot_SOURCES = ' >> Makefile.am
@@ -27,6 +27,9 @@ bin_sites_cgi_bin_traceroute_LDFLAGS = -lpthread
 
 bin_sites_cgi_bin_admin_SOURCES = cgi-bin/admin.c cgi-bin/csapp.c cgi-bin/csapp.h
 bin_sites_cgi_bin_admin_LDFLAGS = -lpthread -lrt
+
+bin_sites_cgi_bin_cookie_SOURCES = cgi-bin/cookie.c
+bin_sites_cgi_bin_cookie_LDFLAGS = -lrt
 
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = subdir-objects

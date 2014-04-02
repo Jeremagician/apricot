@@ -129,10 +129,23 @@ typedef struct {
 	char content_type[CONTENT_TYPE_MAX];
 	struct tm expires;
 	struct tm last_modified;
+	
+	char cookie_id[COOKIE_ID_MAX];
 
 } http_response_t;
 
 /* methods */
+
+#define HTTP_METHOD_STR(x) (\
+		(x==HTTP_METHOD_OPTIONS) ? "OPTIONS" :		\
+		(x==HTTP_METHOD_GET) ? "GET" :				\
+		(x==HTTP_METHOD_HEAD) ? "HEAD" :			\
+		(x==HTTP_METHOD_POST) ? "POST" :			\
+		(x==HTTP_METHOD_PUT) ? "PUT" :				\
+		(x==HTTP_METHOD_DELETE) ? "DELETE" :		\
+		(x==HTTP_METHOD_TRACE) ? "TRACE" :			\
+		(x==HTTP_METHOD_CONNECT) ? "CONNECT" :		\
+		"invalid" )
 
 enum{HTTP_METHOD_OPTIONS = 1,
 	HTTP_METHOD_GET,
