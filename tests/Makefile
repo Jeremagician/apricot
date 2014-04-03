@@ -1,9 +1,10 @@
-all : test1
+all : test
 
 clean :
-	rm test1
+	rm test
 	rm *.cm*
 	rm *.o
+	rm *~
 
-test1 : test1.ml
+test : test.ml
 	ocamlfind ocamlopt -o $@ -linkpkg -package netclient $^

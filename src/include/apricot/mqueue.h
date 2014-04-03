@@ -10,7 +10,7 @@
 #define MQUEUE_FAIL "FAIL"
 #define MQUEUE_SEND_LOG "LOGSEND"
 #define MQUEUE_TRUNCATE_LOG "TRUNCATELOG"
-#define MQUEUE_STOP_SERVER "STOP"
+#define MQUEUE_STOP_SERVER "SERVERSTOP"
 
 /* start message queue for administration interface */
 void mqueue_start();

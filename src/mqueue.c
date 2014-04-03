@@ -43,7 +43,7 @@ void mqueue_start()
 		
 		/* process interface request */
 		
-		if(!strcmp(message_buffer, MQUEUE_SEND_LOG))
+		if(!strcasecmp(message_buffer, MQUEUE_SEND_LOG))
 		{
 			FILE * log_file = log_file = fopen(conf.log_file, "r");
 			
@@ -64,7 +64,7 @@ void mqueue_start()
 			  send(to_client, message_buffer);
 			}
 		}
-		else if(!strcmp(message_buffer, MQUEUE_TRUNCATE_LOG))
+		else if(!strcasecmp(message_buffer, MQUEUE_TRUNCATE_LOG))
 		{
 			/* to preserve log consistency */
 			log_lock();
@@ -74,7 +74,7 @@ void mqueue_start()
 			strcpy(message_buffer, MQUEUE_OK);
 			send(to_client, message_buffer);
 		}
-		else if(!strcmp(message_buffer, MQUEUE_STOP_SERVER))
+		else if(!strcasecmp(message_buffer, MQUEUE_STOP_SERVER))
 		{	
 			log_info("Apricot stop asked by admin interface");
 			master_stop();

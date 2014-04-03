@@ -83,6 +83,7 @@ int main()
 
 	  strcpy(msg, MQUEUE_STOP_SERVER);
 	  send(to_server, msg);
+	  
 	  printf("<h1 style=\"color:red;\"> Server stopped</h1>\n");
 	  printf("</body>\n");
 	  printf("</html>\n");
