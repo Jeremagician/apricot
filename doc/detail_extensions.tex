@@ -82,4 +82,14 @@ Lors du transfer de données depuis le client via un formulaire, on redirige sur
 
 Nous avons implémenté un ``wrapper'' qui nous facilite la lecture des données POST et GET, et la gestion des cookies.
 
+\section{Verrouillage}
+
+Pour assurer la cohérence des fichiers, des cookies notamment, seule une instance du serveur ne peut être exécutée
+en même temps, cette fonctionnalité est implémentée par verrouillage de fichier.
+
+\section{Démon}
+
+Afin de pouvoir faire fonctionner le serveur en arrière-plan et après déconnexion de l'utilisateur, le serveur se lance
+comme un démon par défaut. Pour désactiver cette fonctionnalité, on peut utiliser l'option d.
+
 \end{document}
