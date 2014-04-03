@@ -3,33 +3,66 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2cm]{geometry}
 
-\title{\vspace*{\fill}SR : Construction d'un mini-server web\\Détail des extensions}
+\title{SR : Construction d'un mini-server web\\Détail des extensions}
 \author{Rémy Boutonnet\\Jérémy Derdaele}
+
+\setlength\parindent{0cm}
 
 \begin{document}
 
 \maketitle
 
-\vspace*{\fill}
 
 \textit{
 Ce document présente un bref résumé du principe des solutions adoptées pour les différentes extensions réalisées.
 }
 
-\newpage
-
 \section{Type MIME (*)}
+Apricot gère nativement tout type de documents (et retourne en conséquence, l'entête ``content-type'' adaptée).
+
+Nous utilisons la libmagic pour déterminer le type mime du fichier à envoyer (notamment en lisant le magic number au début du fichier concerné).
+
 
 \section{Gestion des requêtes dynamiques : erreurs et fichier journal (***)}
 
+La gestion des requêtes dynamiques se fait de manière asynchone, c'est à dire que lorsqu'un cgi à terminé de générer les données qu'il souhaite envoyer, le worker qui à lancé le cgi va récupérer le contenu à envoyer et créer une entête http valide.
+
+Si il y a eu un problème d'execution du programme cgi, le worker va alors renvoyer un message d'erreur au client (501 Internal Error).
+
+Nous utilisons un fichier intermédiaire pour passer les données du cgi au worker (qui s'occupe de l'envoi) en essyant d'optimiser le plus possible les transferts (notamment en utilisant le memory mapping).
+
+Afin d'être valide pour Apricot, un cgi doit toujours envoyer le content type des données qu'il renvoie en premier.
+
+L'architecture des workers nous permet par ailleurs de gérer plusieurs cgi (chaque worker possède une table de cgi qui sont actuellement en train de génerer des documents,
+cela rend le worker assez souple car il peut continuer de servir d'autre documents pendant qu'un cgi génère du contenu.
+
 \section{Interface d'administration du serveur (**)}
+
+L'interface d'administration du serveur d'Apricot est axées sur le mécanisme d'IPC ``Message Queue'' :
+Le programme cgi envoie effectivement des ``commandes'' dans un fichier spécial que le serveur va lire.
+
+Il est donc facile d'ajouter ou de supprimer des commandes d'administration à Apricot.
 
 \section{Gestion dynamique du pool de processus (**)}
 
+La gestion dynamique du pool de processus se fait avec un tableau de ``worker'' qui est allouée/réallouée dynamiquement.
+
+Notre implémentation est assez robuste aux erreur d'allocations lors d'un potentiel redimensionnement de la pool.
+
+Par ailleurs, lors d'une diminution de taille, si un worker doit être arrêté, il fini de servir le client si nécéssaire.
+
 \section{Gestion de cookies (version 2) (***)}
+
+La gestion des cookies se fait grâce à un identifiant de cookie (cookie\_id) qui réfère à un fichier côté serveur qui contient toutes les données associés par les programmes cgi.
 
 \section{Programme CGI complexe (**)}
 
+Le programme CGI complexe consiste en un appel à exec en pensant à bien attendre le fils créé et de flush stdout après avoir écrit le ``content-type''
+
 \section{Méthode POST (**)}
+
+Lors du transfer de données depuis le client via un formulaire, on redirige sur l'entrée standard les données, ainsi le cgi à juste à lire les données depuis l'entrée standard.
+
+Nous avons implémenté un ``wrapper'' qui nous facilite la lecture des données POST et GET, et la gestion des cookies.
 
 \end{document}
