@@ -5,4 +5,7 @@
 
 void cookie_create(char * dest);
 
+/* remove all cookies */
+void cookie_remove_all();
+
 #endif

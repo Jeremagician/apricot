@@ -198,52 +198,77 @@ static void cgi_init_post()
 	}
 }
 
-/* Converts a hex character to its integer value */
 static char from_hex(char ch) {
   return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
 }
 
-/* Converts an integer value to its hex character*/
 static char to_hex(char code) {
   static char hex[] = "0123456789abcdef";
+  
   return hex[code & 15];
 }
 
-/* Returns a url-encoded version of str */
-/* IMPORTANT: be sure to free() the returned string after use */
-static char *url_encode(char *str) {
-  char *pstr = str, *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
-  while (*pstr) {
-    if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
-      *pbuf++ = *pstr;
-    else if (*pstr == ' ') 
+/* encode une chaine valeur pour un fichier de cookies */
+/* doit etre absolument liberee */
+static char * url_encode(char *str) {
+  char *buf = malloc(strlen(str) * 3 + 1);
+  char *pbuf = buf;
+  
+  while (*str) 
+  {
+    if (isalnum(*str) || *str == '-' || *str == '_' || *str == '.' || *str == '~') 
+    {
+      *pbuf++ = *str;
+    }
+    else if (*str == ' ')
+    { 
       *pbuf++ = '+';
-    else 
-      *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
-    pstr++;
+    }
+    else
+    { 
+      *pbuf++ = '%';
+      *pbuf++ = to_hex(*str >> 4);
+      *pbuf++ = to_hex(*str & 15);
+    }
+    
+    str++;
   }
+  
   *pbuf = '\0';
+  
   return buf;
 }
 
-/* Returns a url-decoded version of str */
-/* IMPORTANT: be sure to free() the returned string after use */
-static char *url_decode(char *str) {
-  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
-  while (*pstr) {
-    if (*pstr == '%') {
-      if (pstr[1] && pstr[2]) {
-        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
-        pstr += 2;
+/* decode une chaine valeur dans un fichier de cookies */
+/* la chaine renvoyee doit etre liberee */
+static char * url_decode(char *str) {
+  char *buf = malloc(strlen(str) + 1);
+  char *pbuf = buf;
+  
+  while (*str) 
+  {
+  	if (*str == '%') 
+    {
+      if (*(str+1) && *(str+2)) 
+      {
+        *pbuf++ = from_hex(*(str + 1)) << 4 | from_hex(*(str + 2));
+        str += 2;
       }
-    } else if (*pstr == '+') { 
+    } 
+    else if (*str == '+') 
+    { 
       *pbuf++ = ' ';
-    } else {
-      *pbuf++ = *pstr;
+    } 
+    else 
+    {
+      *pbuf++ = *str;
     }
-    pstr++;
+    
+    str++;
   }
+  
   *pbuf = '\0';
+  
   return buf;
 }
 

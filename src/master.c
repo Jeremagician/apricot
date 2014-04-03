@@ -5,6 +5,7 @@
 #include <apricot/conf.h>
 #include <apricot/mqueue.h>
 #include <apricot/mime.h>
+#include <apricot/cookie.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +23,6 @@ void master_start(int port, char ** argv)
 	int listenfd;
 
 	/* change process name */
-	
 	strcpy(argv[0], "apricot [master]");
 	arguments = argv;
 	
@@ -50,7 +50,7 @@ void master_stop()
 	mime_close();
 	mqueue_stop();
 	log_info("Apricot admin interface closed");
-	
+	cookie_remove_all();
   	unlink(LOCK_FILE);
 	
 	log_info("Apricot web server stopped");
