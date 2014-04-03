@@ -22,26 +22,35 @@ static void prefix_tree_free(prefix_tree_t *tree);
 
 static prefix_tree_t *POST;
 static prefix_tree_t *GET;
+static prefix_tree_t *COOKIE;
 static int has_post = 0;
 static int has_get = 0;
+static int has_cookie = 0;
 
 static void cgi_init_get();
 static void cgi_init_post();
+static void cgi_init_cookie();
 static int parse_data(char * buf, prefix_tree_t *t);
+static void cgi_write_cookies();
 
 void cgi_init()
 {
 	POST = prefix_tree_new();
 	GET = prefix_tree_new();
+	POST = prefix_tree_new();
+	COOKIE = prefix_tree_new();
 
 	if(POST) cgi_init_post();
 	if(GET) cgi_init_get();
+	if(COOKIE) cgi_init_cookie();
 }
 
 void cgi_exit()
 {
 	prefix_tree_free(POST);
 	prefix_tree_free(GET);
+	cgi_write_cookies();
+	prefix_tree_free(COOKIE);
 }
 
 int cgi_post_isset(char * key)
@@ -64,7 +73,20 @@ char * cgi_get_value(char * key)
 	return prefix_tree_get(GET, key);
 }
 
+int cgi_cookie_isset(char * key)
+{
+	return prefix_tree_get(COOKIE, key) != NULL;
+}
 
+char * cgi_cookie_get(char * key)
+{
+	return prefix_tree_get(COOKIE, key);
+}
+
+void cgi_cookie_set(char * key, char * value)
+{
+	return prefix_tree_set(COOKIE, key, value);
+}
 
 static prefix_tree_t* prefix_tree_new()
 {
@@ -174,6 +196,141 @@ static void cgi_init_post()
 		read(STDIN_FILENO, post_buf, content_length);
 		has_post = parse_data(post_buf, POST);
 	}
+}
+
+/* Converts a hex character to its integer value */
+static char from_hex(char ch) {
+  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+/* Converts an integer value to its hex character*/
+static char to_hex(char code) {
+  static char hex[] = "0123456789abcdef";
+  return hex[code & 15];
+}
+
+/* Returns a url-encoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+static char *url_encode(char *str) {
+  char *pstr = str, *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
+  while (*pstr) {
+    if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
+      *pbuf++ = *pstr;
+    else if (*pstr == ' ') 
+      *pbuf++ = '+';
+    else 
+      *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+
+/* Returns a url-decoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+static char *url_decode(char *str) {
+  char *pstr = str, *buf = malloc(strlen(str) + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '%') {
+      if (pstr[1] && pstr[2]) {
+        *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
+        pstr += 2;
+      }
+    } else if (*pstr == '+') { 
+      *pbuf++ = ' ';
+    } else {
+      *pbuf++ = *pstr;
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+
+static void cgi_init_cookie()
+{
+	char * buf;
+	char key[COOKIE_KEY_MAX];
+	char value[COOKIE_VALUE_MAX];
+	
+	if((buf = getenv("COOKIE")) != NULL && *buf)
+	{
+		FILE * f = fopen(buf, "r");
+		
+		if(!f)
+		{
+			exit(EXIT_FAILURE);
+		}
+		
+		has_cookie = 1;
+		
+		while(!feof(f))
+		{
+			fscanf(f, "%s %s", key, value);
+			
+			char * decoded = url_decode(value);
+			strcpy(value, decoded);
+			free(decoded);
+				
+			prefix_tree_set(COOKIE, key, value);
+		}
+		
+		fclose(f);
+	}
+}
+
+static void cgi_write_cookies_recursive(FILE * f, prefix_tree_t * tree)
+{
+	if(tree)
+	{
+		if(tree->data)
+		{
+			char * encode = url_encode(tree->data);
+			fprintf(f, " %s\n", encode);
+			free(encode);
+		}
+		else
+		{
+			int i;
+			
+			for(i = 0; i < CHAR_RANGE; i++)
+			{
+				if(tree->table[i])
+				{
+					fputc((char)CHAR_MIN+i, f);
+					cgi_write_cookies_recursive(f, tree->table[i]);
+				}
+			}
+		}
+	}
+}
+
+static void cgi_write_cookies()
+{
+	char * buf;
+	char tmp[COOKIE_KEY_MAX + COOKIE_VALUE_MAX];
+	char key[COOKIE_KEY_MAX];
+	char value[COOKIE_VALUE_MAX];
+	
+	if((buf = getenv("COOKIE")) != NULL && *buf)
+	{
+		truncate(buf, 0);
+		FILE * f = fopen(buf, "w");
+		
+		if(!f)
+		{
+			exit(EXIT_FAILURE);
+		}
+		
+		cgi_write_cookies_recursive(f, COOKIE);
+		
+		fclose(f);
+	}
+}
+
+int cgi_has_cookie()
+{
+	return has_cookie;
 }
 
 int cgi_has_get()

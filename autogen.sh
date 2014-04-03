@@ -26,7 +26,7 @@ bin_sites_cgi_bin_traceroute_SOURCES = cgi-bin/traceroute.c cgi-bin/cgi.h cgi-bi
 bin_sites_cgi_bin_admin_SOURCES = cgi-bin/admin.c cgi-bin/cgi.h cgi-bin/cgi.c
 bin_sites_cgi_bin_admin_LDFLAGS = -lrt
 
-bin_sites_cgi_bin_cookie_SOURCES = cgi-bin/cookie.c
+bin_sites_cgi_bin_cookie_SOURCES = cgi-bin/cookie.c cgi-bin/cgi.h cgi-bin/cgi.c
 bin_sites_cgi_bin_cookie_LDFLAGS = -lrt
 
 ACLOCAL_AMFLAGS = -I m4

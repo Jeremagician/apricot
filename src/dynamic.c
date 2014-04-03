@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/poll.h>
+#include <sys/stat.h>
 
 int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *request)
 {
@@ -15,8 +16,11 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *reque
 	pid_t pid;
 	FILE* output;
 	char cookie_tmp[COOKIE_ID_MAX];
+	struct stat cookie_stat;
+	
+	log_debug("%s", request->cookie_id);
 
-	if(strlen(request->cookie_id) == 0)
+	if(!*request->cookie_id || stat(request->cookie_id, &cookie_stat) < 0)
 	{
 	  cookie_create(cookie_tmp);
 	}

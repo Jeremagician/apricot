@@ -2,7 +2,7 @@
 src/*.o
 *~
 /bin/apricot
-/bin/cookies/*
+/bin/cookies/c*
 /bin/sites/cgi-bin/*
 autom4te.cache
 config.h
