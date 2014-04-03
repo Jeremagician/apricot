@@ -17,7 +17,7 @@ bin_apricot_CFLAGS = -Wall -Werror -O3 -Isrc/include
 apricotconfdir=$(sysconfdir)/apricot
 apricotconf_DATA = bin/apricot.conf
 
-EXTRA_DIST = bin/apricot.conf
+EXTRA_DIST = bin/apricot.conf bin/sites/detail_extensions.pdf bin/sites/form.html bin/sites/home.html bin/sites/pyramide.jpg bin/stop.sh bin/cookies tests/test.ml tests/charge.ml tests/Makefile
 
 bin_sites_cgi_bin_adder_SOURCES = cgi-bin/adder.c cgi-bin/cgi.h cgi-bin/cgi.c
 
