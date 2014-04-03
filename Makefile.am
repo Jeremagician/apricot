@@ -8,14 +8,12 @@ apricotconf_DATA = bin/apricot.conf
 
 EXTRA_DIST = bin/apricot.conf
 
-bin_sites_cgi_bin_adder_SOURCES = cgi-bin/adder.c cgi-bin/csapp.c cgi-bin/csapp.h
-bin_sites_cgi_bin_adder_LDFLAGS = -lpthread
+bin_sites_cgi_bin_adder_SOURCES = cgi-bin/adder.c cgi-bin/cgi.h cgi-bin/cgi.c
 
-bin_sites_cgi_bin_traceroute_SOURCES = cgi-bin/traceroute.c cgi-bin/csapp.c cgi-bin/csapp.h
-bin_sites_cgi_bin_traceroute_LDFLAGS = -lpthread
+bin_sites_cgi_bin_traceroute_SOURCES = cgi-bin/traceroute.c cgi-bin/cgi.h cgi-bin/cgi.c
 
-bin_sites_cgi_bin_admin_SOURCES = cgi-bin/admin.c cgi-bin/csapp.c cgi-bin/csapp.h
-bin_sites_cgi_bin_admin_LDFLAGS = -lpthread -lrt
+bin_sites_cgi_bin_admin_SOURCES = cgi-bin/admin.c cgi-bin/cgi.h cgi-bin/cgi.c
+bin_sites_cgi_bin_admin_LDFLAGS = -lrt
 
 bin_sites_cgi_bin_cookie_SOURCES = cgi-bin/cookie.c
 bin_sites_cgi_bin_cookie_LDFLAGS = -lrt
