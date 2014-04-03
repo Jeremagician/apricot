@@ -25,7 +25,7 @@ int main(void)
 	/* On sais qu'on processus fils hérite des descripteurs de sont père donc pas de soucis de ce côté là */
 	if(fork() == 0)
 	{
-		//dup2(devnull, STDERR_FILENO);
+		dup2(devnull, STDERR_FILENO);
 		execlp("traceroute", "traceroute", dest, NULL);
 		perror("erreur");
 		exit(EXIT_FAILURE);
