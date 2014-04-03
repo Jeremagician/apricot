@@ -25,27 +25,30 @@ Nous utilisons la libmagic pour déterminer le type mime du fichier à envoyer (
 
 \section{Gestion des requêtes dynamiques : erreurs et fichier journal (***)}
 
-La gestion des requêtes dynamiques se fait de manière asynchone, c'est à dire que lorsqu'un cgi à terminé de générer les données qu'il souhaite envoyer, le worker qui à lancé le cgi va récupérer le contenu à envoyer et créer une entête http valide.
+La gestion des requêtes dynamiques se fait de manière asynchone, c'est à dire que lorsqu'un cgi a terminé de générer les données qu'il souhaite envoyer, le worker qui a lancé le cgi va récupérer le contenu à envoyer et créer une entête http valide.
 
 Si il y a eu un problème d'execution du programme cgi, le worker va alors renvoyer un message d'erreur au client (501 Internal Error).
 
 Nous utilisons un fichier intermédiaire pour passer les données du cgi au worker (qui s'occupe de l'envoi) en essyant d'optimiser le plus possible les transferts (notamment en utilisant le memory mapping).
 
-Afin d'être valide pour Apricot, un cgi doit toujours envoyer le content type des données qu'il renvoie en premier.
+Afin d'être valide pour Apricot, un cgi doit toujours envoyer le content type des données qu'il doit envoit en premier.
 
-L'architecture des workers nous permet par ailleurs de gérer plusieurs cgi (chaque worker possède une table de cgi qui sont actuellement en train de génerer des documents,
+L'architecture des workers nous permet par ailleurs de gérer plusieurs cgi (chaque worker possède une table de cgi qui sont en cours d'execution,
 cela rend le worker assez souple car il peut continuer de servir d'autre documents pendant qu'un cgi génère du contenu.
 
 \section{Interface d'administration du serveur (**)}
 
-L'interface d'administration du serveur d'Apricot est axées sur le mécanisme d'IPC ``Message Queue'' :
-Le programme cgi envoie effectivement des ``commandes'' dans un fichier spécial que le serveur va lire.
+L'interface d'administration du serveur d'Apricot utilise le mécanisme d'IPC Message Queue :
+Le programme cgi envoie effectivement des commandes dans une file de message mqueue\_t que le serveur va lire.
+
+L'interface d'administration du serveur est accessible via le programme cgi admin et permet de visualiser le fichier
+journal, de l'effacer, de redémarrer le serveur et de redimensionner la pool de workers à une taille inférieure.
 
 Il est donc facile d'ajouter ou de supprimer des commandes d'administration à Apricot.
 
 \section{Gestion dynamique du pool de processus (**)}
 
-La gestion dynamique du pool de processus se fait avec un tableau de ``worker'' qui est allouée/réallouée dynamiquement.
+La gestion dynamique du pool de processus se fait avec un tableau de workers qui est alloué/réalloué dynamiquement.
 
 Notre implémentation est assez robuste aux erreur d'allocations lors d'un potentiel redimensionnement de la pool.
 
@@ -53,11 +56,25 @@ Par ailleurs, lors d'une diminution de taille, si un worker doit être arrêté,
 
 \section{Gestion de cookies (version 2) (***)}
 
-La gestion des cookies se fait grâce à un identifiant de cookie (cookie\_id) qui réfère à un fichier côté serveur qui contient toutes les données associés par les programmes cgi.
+La gestion des cookies se fait grâce à un identifiant de cookie (cookie\_id) qui référence un fichier côté serveur qui contient toutes les données associées par les programmes cgi.
+
+Lors de l'arrêt du serveur, les fichiers cookies sont effacés.
+
+Quand un fichier cookie côté serveur est supprimé, un nouveau cookie est généré.
+
+Le programme cgi cookie permet de tester cette fonctionnalité de cookies : il mémorise avec un cookie le contenu d'une
+variable message passée en paramètre GET au programme précédement, il compte également les visites d'un même visiteur
+et affiche le contenu d'une chaine stockée dans un cookie contenant un caractère de retour à la ligne. On vérifie ainsi
+que l'encodage des données stockées dans le cookie est correct.\\
+
+Afin de stocker pour chaque cookie un ensemble de paires (clé, valeur), on implémente des arbres à préfixe qui garantissent
+un accès à la valeur de complexité proportionnelle à la longueur de la clé.
 
 \section{Programme CGI complexe (**)}
 
-Le programme CGI complexe consiste en un appel à exec en pensant à bien attendre le fils créé et de flush stdout après avoir écrit le ``content-type''
+Le programme CGI complexe consiste en un appel à exec en pensant à bien attendre le fils créé et de flush stdout après avoir écrit le ``content-type''.\\
+
+On appelle le programme traceroute, disponible depuis l'interface d'administration.
 
 \section{Méthode POST (**)}
 

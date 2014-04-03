@@ -17,8 +17,6 @@ int dynamic_serve(int fd, char * filename, char * cgiargs, http_request_t *reque
 	FILE* output;
 	char cookie_tmp[COOKIE_ID_MAX];
 	struct stat cookie_stat;
-	
-	log_debug("%s", request->cookie_id);
 
 	if(!*request->cookie_id || stat(request->cookie_id, &cookie_stat) < 0)
 	{
