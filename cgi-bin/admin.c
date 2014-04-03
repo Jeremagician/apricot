@@ -149,8 +149,8 @@ int main()
 	printf("</body>\n");
 	printf("</html>\n");
   }
-
-	cgi_exit();
+  
+  cgi_exit();
 
   fflush(stdout);
   return EXIT_SUCCESS;
