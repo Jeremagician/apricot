@@ -11,6 +11,7 @@
 #define MQUEUE_SEND_LOG "LOGSEND"
 #define MQUEUE_TRUNCATE_LOG "TRUNCATELOG"
 #define MQUEUE_STOP_SERVER "SERVERSTOP"
+#define MQUEUE_RESIZE_POOL "RESIZEPOOL"
 
 /* start message queue for administration interface */
 void mqueue_start();

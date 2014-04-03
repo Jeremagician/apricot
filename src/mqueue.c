@@ -2,6 +2,7 @@
 #include <apricot/master.h>
 #include <apricot/log.h>
 #include <apricot/conf.h>
+#include <apricot/pool.h>
 
 #include <mqueue.h>
 #include <fcntl.h>
@@ -80,10 +81,36 @@ void mqueue_start()
 			master_stop();
 			exit(EXIT_SUCCESS);
 		}
+		else if(!strcasecmp(message_buffer, MQUEUE_RESIZE_POOL))
+		{
+			log_info("Pool resize asked by admin interface");
+			
+			/* receive a message from the client administration interface */
+			if(mq_receive(from_client, message_buffer, MQUEUE_BUFFER_SIZE, NULL) == -1)
+			{
+			  log_error("mq_receive failed to receive new pool size : %s", strerror(errno));
+			  continue;
+			}
+			
+			int new_size;
+			
+			if(sscanf(message_buffer, "%i", &new_size) != 1 || new_size <= 0)
+			{
+				log_error("invalid pool size %i received from admin interface", new_size);
+				strcpy(message_buffer, MQUEUE_FAIL);
+				send(to_client, message_buffer);
+				continue;
+			}
+			
+			pool_resize(new_size);
+			
+			strcpy(message_buffer, MQUEUE_OK);
+			send(to_client, message_buffer);
+		}
 		else
 		{
-		   strcpy(message_buffer, MQUEUE_FAIL);
-		   send(to_client, message_buffer);
+		   	strcpy(message_buffer, MQUEUE_FAIL);
+		   	send(to_client, message_buffer);
 		}
 	}
 }

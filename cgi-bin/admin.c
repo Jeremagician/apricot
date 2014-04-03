@@ -3,11 +3,13 @@
 #include <string.h>
 #include <fcntl.h>
 #include <mqueue.h>
+#include "cgi.h"
 #include "../src/include/apricot/mqueue.h"
 
 #define PRINT_LOG_ACTION "printlog"
 #define TRUNCATE_LOG_ACTION "truncatelog"
 #define SERVER_STOP_ACTION "serverstop"
+#define POOL_RESIZE_ACTION "resizepool"
 
 static void send(mqd_t mq, char * msg);
 static void receive(mqd_t mq, char * msg);
@@ -19,6 +21,8 @@ int main()
   char msg[MQUEUE_BUFFER_SIZE];
   mqd_t to_server;
   mqd_t from_server;
+  
+  cgi_init();
 
   to_server = mq_open(MQUEUE_SERVER, O_WRONLY);
   from_server = mq_open(MQUEUE_CLIENT, O_RDONLY);
@@ -28,8 +32,10 @@ int main()
 
   printf("Content-type: text/html\n");
 
-  if ((buf = getenv("QUERY_STRING")) != NULL && *buf && sscanf(buf, "action=%79s", action) == 1)
+  if (cgi_has_get() && cgi_get_isset("action"))
   {
+  	strncpy(action, cgi_get_value("action"), 79);
+  	
 	if(!strcmp(action, PRINT_LOG_ACTION))
 	{
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
@@ -87,6 +93,37 @@ int main()
 	  printf("</body>\n");
 	  printf("</html>\n");
 	}
+	else if(!strcmp(action, POOL_RESIZE_ACTION))
+	{
+		  printf("<html><head><title>Apricot Admin Interface</title>\n");
+		  printf("</head>\n\n");
+		  printf("<body>\n");
+		  
+		  if(!cgi_get_isset("size"))
+		  {
+		  	printf("<h1>ERROR : No size given</h1>\n");
+		  }
+		  else
+		  {
+		  	strcpy(msg, MQUEUE_RESIZE_POOL);
+		  	send(to_server, msg);
+		  	strcpy(msg, cgi_get_value("size"));
+		  	send(to_server, msg);
+		  	receive(from_server, msg);
+
+			if(!strcmp(msg, MQUEUE_OK))
+			{
+				printf("<h1>Pool resize done</h1>\n");
+			}
+			else
+			{
+				printf("<h1>Pool resize failed</h1>\n");
+			}
+		  }
+		  
+		  printf("</body>\n");
+		  printf("</html>\n");
+	}
 	else
 	{
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
@@ -105,9 +142,12 @@ int main()
 	printf("</br><a href=\"?action=printlog\">Print the log file</a>\n");
 	printf("</br><a href=\"?action=truncatelog\">Reset log file</a>\n");
 	printf("</br><a href=\"?action=serverstop\">Stop server</a>\n");
+	printf("</br><a href=\"?action=resizepool\">Resize workers pool</a>\n");
 	printf("</body>\n");
 	printf("</html>\n");
   }
+
+	cgi_exit();
 
   fflush(stdout);
   return EXIT_SUCCESS;
