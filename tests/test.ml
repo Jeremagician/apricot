@@ -108,5 +108,5 @@ let () =
 				test4 "cgi-bin/admin" "text/html" &&
 				test4 "cgi-bin/traceroute" "text/plain" &&
 				test4 "factorial.lisp" "text/plain" 
-	in	
+	in
 		exit (if result then 0 else 1)
