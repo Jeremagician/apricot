@@ -101,7 +101,10 @@ int main()
 		  
 		  if(!cgi_get_isset("size"))
 		  {
-		  	printf("<h1>ERROR : No size given</h1>\n");
+		  	printf("<form method=\"get\" action=\"admin\">\n");
+		  	printf("<input type=\"hidden\" name=\"action\" value=\"resizepool\"></input>\n");
+		  	printf("<label>Pool size : </label><input type=\"text\" size=\"20\" name=\"size\"></input>\n");
+		  	printf("<input type=\"submit\" value=\"Ok\"></input></form>\n");
 		  }
 		  else
 		  {
