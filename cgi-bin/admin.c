@@ -33,7 +33,6 @@ int main()
 	if(!strcmp(action, PRINT_LOG_ACTION))
 	{
 	  printf("<html><head><title>Apricot Admin Interface</title>\n");
-	  printf("<meta http-equiv=\"refresh\" content=\"20\"> \n");
 	  printf("</head>\n\n");
 	  printf("<body>\n");
 
