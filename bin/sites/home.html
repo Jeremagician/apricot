@@ -49,8 +49,7 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="/cgi-bin/admin">Admin</a></li>
         </ul>
         <h3 class="muted">Apricot Web Server</h3>
       </div>
@@ -66,25 +65,38 @@
 
       <div class="row-fluid marketing">
         <div class="span6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+          <a href="/detail_extensions.pdf"><h4>Details des extensions</h4></a>
+          <p>
+			Document précisant les choix d'implémentation des extensions réalisées
+		  </p>
 
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
+          <a href="/cgi-bin/admin"><h4>Panel Admin</h4></a>
+          <p>
+			Interface d'administration du serveur web Apricot.
+		  </p>
 
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <a href="/pyramide.jpg"><h4>La Pyramide</h4></a>
+          <p>
+			Magnifique image de Pyramide.
+		  </p>
         </div>
 
         <div class="span6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+          <h4>Traceroute</h4>
+          <p>
+			<form method="get" action="/cgi-bin/traceroute">
+			  <input type="text" name="dest" /><br/>
+			  <input type="submit"/>
+			</form>
+		  </p>
 
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <h4>Adder</h4>
+          <p>
+			<form method="get" action="/cgi-bin/adder">
+			  <input style="width:30px" type="text" name="arg1" /> + <input style="width:30px" type="text" name="arg2" /><br/>
+			  <input type="submit"/>
+			</form>
+		  </p>
         </div>
       </div>
 
