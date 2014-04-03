@@ -266,7 +266,7 @@ static void cgi_init_cookie()
 		
 		while(!feof(f))
 		{
-			fscanf(f, "%s %s", key, value);
+			fscanf(f, "%511s %8191s", key, value);
 			
 			char * decoded = url_decode(value);
 			strcpy(value, decoded);
