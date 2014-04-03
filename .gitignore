@@ -4,7 +4,6 @@ src/*.o
 /bin/apricot
 /bin/cookies/*
 /bin/sites/cgi-bin/*
-apricot.log
 autom4te.cache
 config.h
 config.status
@@ -12,4 +11,10 @@ Makefile
 .deps
 .dirstamp
 stamp-h1
-config.log
+*.log
+*.aux
+*.pdf
+
+tests/*
+!tests/Makefile
+!tests/*.ml

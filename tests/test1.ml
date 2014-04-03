@@ -18,7 +18,7 @@ let test_eq_page (uri : string) (f : string) =
 	let received_from_server = http_get uri in
 	let from_file = read_file f in
 		received_from_server = from_file
-	
+
 let () =
 	if test_eq_page (base_url^"/") home_page then
 		begin
@@ -28,11 +28,11 @@ let () =
 	else
 		begin
 			print_endline "not equal";
-		
+
 			print_endline "--- file ---";
 			print_endline (read_file home_page);
 			print_endline "-------------";
-		
+
 			print_endline "--- web page ---";
 			print_endline (http_get (base_url^"/"));
 			print_endline "-------------";
