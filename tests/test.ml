@@ -18,7 +18,9 @@ let read_file (name : string) =
 let get_mime_type (uri : string) =
 	let msg = http_get_message uri in
 	let response_header = msg#response_header in
-		ignore response_header
+	let content_type = response_header#content_type () in
+		match content_type with
+			 (main_mime_type, _) -> main_mime_type
 
 (* code de retour http d'une requete *)
 let get_http_code (uri : string) =
@@ -75,6 +77,21 @@ let test3 () =
 		false
 	with
 		_ -> print_endline "serverstop OK"; true
+		
+(* TEST4 : gestion des types mime *)
+let test4 (file : string) (mime_type : string) =
+	let uri = (base_url ^ file) in
+	let received_mime_type = get_mime_type uri in
+		if received_mime_type = mime_type then
+			begin
+				print_endline ("mime type of " ^ uri ^ " OK");
+				true
+			end
+		else
+			begin
+				print_endline ("mime type of " ^uri ^ "FAIL");
+				false
+			end
 
 let () =
 	let result = test1 () && 
@@ -85,6 +102,11 @@ let () =
 				test2 "cgi-bin/does-not-exist?var=value" 404 && (* cgi inexistant avec parametres *)
 				test2 "cgi-bin/adder" 200 &&
 				test2 "cgi-bin/admin" 200 &&
-				test3 ()
-	in
+			 (*	test3 () && test l'arret via l'interface admin *)
+				test4 "pyramide.jpg" "image/jpeg" &&
+				test4 "home.html" "text/html" &&
+				test4 "cgi-bin/admin" "text/html" &&
+				test4 "cgi-bin/traceroute" "text/plain" &&
+				test4 "factorial.lisp" "text/plain" 
+	in	
 		exit (if result then 0 else 1)
