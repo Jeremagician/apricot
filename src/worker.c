@@ -77,7 +77,6 @@ static void signal_handler(int sig)
 		{
 			int i = 0;
 			while(i < cgi_table_size && cgi_table[i].pid != pid) i++; /* On cherche l'indice du cgi dans la cgi table */
-
 			if(i == cgi_table_size)
 			{
 				/*
@@ -96,9 +95,9 @@ static void signal_handler(int sig)
 				{
 					/*
 					  Le programme s'est quitté anormalement, on renvoie une erreur 500
-					 */
-					http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
+					*/
 					log_error("cgi (%i) execution error", pid);
+					http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
 				}
 				else
 				{
@@ -108,20 +107,15 @@ static void signal_handler(int sig)
 					int cgifd = fileno(cgi_table[i].cgifile);
 					rio_t rio;
 					char line[MAXLINE];
-					char *field, *content;
+					char *field = NULL, *content = NULL;
 					int size;
-					(void)size;
-					
+
 					lseek(cgifd, 0, SEEK_SET);
 					Rio_readinitb(&rio, cgifd);
 					size = Rio_readlineb(&rio, line, MAXLINE);
 
-					field = strtok(line, ":");
-					content = strtok(NULL, ":");
-					content[strlen(content)-1] = 0;
-					strlower(field);
-					
-					if(strcmp(field, "content-type"))
+					field = strtok_r(line, ":", &content);
+					if(!field || !content || strcasecmp(field, "content-type") || !*content)
 					{
 						http_clienterror(cgi_table[i].clientfd, HTTP_INTERNAL_ERROR, HTTP_STR(HTTP_INTERNAL_ERROR));
 						log_error("cgi output expected content-type header");
@@ -129,6 +123,7 @@ static void signal_handler(int sig)
 					}
 					else
 					{
+						content[strlen(content)-1] = 0;
 						fstat(cgifd, &sbuf);
 
 						/* On crée notre entête http */

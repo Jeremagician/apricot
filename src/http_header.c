@@ -23,9 +23,35 @@
 /* buffer to read a line through the connection */
 static char buf[BUF_SIZE];
 
+/*
+  On utilise notre propre fonction de lecture dans la socket car rio
+  est bloquant du à l'appel à rio_read
+ */
+static ssize_t http_readline(int fd, void *usrbuf, size_t maxlen)
+{
+    int n, rc;
+    char c, *bufp = usrbuf;
+
+    for (n = 1; n < maxlen; n++) {
+		if ((rc = read(fd, &c, 1)) == 1) {
+			*bufp++ = c;
+			if (c == '\n')
+				break;
+		} else if (rc == 0) {
+			if (n == 1)
+				return 0; /* EOF, no data read */
+			else
+				break;    /* EOF, some data was read */
+		} else
+			return -1;	  /* error */
+    }
+    *bufp = 0;
+    return n;
+}
+
+
 int http_request_read(int fd, http_request_t * request)
 {
-	rio_t rio;
 	char method[METHOD_MAX];
 	char * field;
 	char * content;
@@ -72,10 +98,8 @@ int http_request_read(int fd, http_request_t * request)
 		&&not_supported
 	};
 
-	Rio_readinitb(&rio, fd);
-
 	/* read request line */
-	Rio_readlineb(&rio, buf, BUF_SIZE);
+	http_readline(fd, buf, BUF_SIZE);
 
 	if(sscanf(buf, "%24s %8096s HTTP/%i.%i", method, request->uri, &request->http_version_major, &request->http_version_minor) != 4)
 	{
@@ -93,7 +117,7 @@ int http_request_read(int fd, http_request_t * request)
 		http_clienterror(fd, HTTP_NOT_IMPLEMENTED, "Apricot does not implement his method");
 		return -1;
 	}
-	
+
 	/* check http version number */
 	if(request->http_version_major < 0 || request->http_version_minor < 0
 		|| request->http_version_major > 9 || request->http_version_minor > 9)
@@ -106,7 +130,7 @@ int http_request_read(int fd, http_request_t * request)
 	request->client_address = getclientaddr(fd);
 
 	/* read other headers */
-	Rio_readlineb(&rio, buf, BUF_SIZE);
+	http_readline(fd, buf, BUF_SIZE);
 
     while (!(buf[0] == '\r' && buf[1] == '\n'))
     {
@@ -194,7 +218,7 @@ int http_request_read(int fd, http_request_t * request)
 		content_type :
 			strncpy(request->content_type, content, CONTENT_TYPE_MAX);
 			goto fetch;
-			
+
 		cookie :
 			strncpy(request->cookie_id, content, COOKIE_ID_MAX);
 			goto fetch;
@@ -269,7 +293,7 @@ int http_request_read(int fd, http_request_t * request)
 
 		fetch :
 
-        Rio_readlineb(&rio, buf, BUF_SIZE);
+		http_readline(fd, buf, BUF_SIZE);
     }
 
     /* checks that a host header has been given
@@ -282,52 +306,10 @@ int http_request_read(int fd, http_request_t * request)
 		return -1;
 	}
 
+	puts(buf);
+
 	return 0;
 }
-
-
-/*
-typedef struct {
-
-	int http_version_major;
-	int http_version_minor;
-	int status_code;
-	char reason_phrase[REASON_PHRASE_MAX];
-
-
-	char accept_ranges[ACCEPT_RANGES_MAX];
-	int age;
-	char etag[ETAG_MAX];
-	char location[URI_MAX];
-	char proxy_authenticate[PROXY_AUTH_MAX];
-	char retry_after[RETRY_AFTER_MAX];
-	char server[SERVER_MAX];
-	char vary[VARY_MAX];
-	char www_authenticate[WWW_AUTH_MAX];
-
-
-	char cache_control[CACHE_CONTROL_MAX];
-	char connection[CONNECTION_MAX];
-	struct tm date;
-	char pragma[PRAGMA_MAX];
-	char trailer[TRAILER_MAX];
-	char upgrade[UPGRADE_MAX];
-	char via[VIA_MAX];
-	int warn_code;
-
-	int allow;
-	char content_encoding[CONTENT_ENCODING_MAX];
-	char content_language[CONTENT_LANGUAGE_MAX];
-	int content_length;
-	char content_location[URI_MAX];
-	char content_md5[CONTENT_MD5_MAX];
-	char content_range[CONTENT_RANGE_MAX];
-	char content_type[CONTENT_TYPE_MAX];
-	struct tm expires;
-	struct tm last_modified;
-
-} http_response_t;
-*/
 
 /*
   See :
