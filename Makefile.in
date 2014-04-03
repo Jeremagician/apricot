@@ -112,7 +112,6 @@ am_bin_apricot_OBJECTS = src/bin_apricot-conf.$(OBJEXT) \
 	src/bin_apricot-mime.$(OBJEXT) \
 	src/bin_apricot-mqueue.$(OBJEXT) \
 	src/bin_apricot-pool.$(OBJEXT) \
-	src/bin_apricot-rewrite.$(OBJEXT) \
 	src/bin_apricot-static.$(OBJEXT) \
 	src/bin_apricot-utils.$(OBJEXT) \
 	src/bin_apricot-worker.$(OBJEXT)
@@ -344,7 +343,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_apricot_SOURCES = src/conf.c src/cookie.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_error.c src/http_header.c src/include/apricot/conf.h src/include/apricot/cookie.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_error.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/magic.h src/include/apricot/master.h src/include/apricot/mime.h src/include/apricot/mqueue.h src/include/apricot/pool.h src/include/apricot/rewrite.h src/include/apricot/static.h src/include/apricot/utils.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/mime.c src/mqueue.c src/pool.c src/rewrite.c src/static.c src/utils.c src/worker.c 
+bin_apricot_SOURCES = src/conf.c src/cookie.c src/csapp.c src/dispatcher.c src/dynamic.c src/http_error.c src/http_header.c src/include/apricot/conf.h src/include/apricot/cookie.h src/include/apricot/csapp.h src/include/apricot/dispatcher.h src/include/apricot/dynamic.h src/include/apricot/http_codes.h src/include/apricot/http_error.h src/include/apricot/http_header.h src/include/apricot/log.h src/include/apricot/magic.h src/include/apricot/master.h src/include/apricot/mime.h src/include/apricot/mqueue.h src/include/apricot/pool.h src/include/apricot/static.h src/include/apricot/utils.h src/include/apricot/worker.h src/log.c src/main.c src/master.c src/mime.c src/mqueue.c src/pool.c src/static.c src/utils.c src/worker.c 
 bin_apricot_LDFLAGS = -lpthread `find /usr/lib -name libmagic.so* -type f` -lrt
 bin_apricot_CFLAGS = -Wall -Werror -O3 -Isrc/include
 apricotconfdir = $(sysconfdir)/apricot
@@ -486,8 +485,6 @@ src/bin_apricot-mqueue.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-pool.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/bin_apricot-rewrite.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-static.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/bin_apricot-utils.$(OBJEXT): src/$(am__dirstamp) \
@@ -563,7 +560,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-mime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-mqueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-pool.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-rewrite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-static.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/bin_apricot-worker.Po@am__quote@
@@ -765,20 +761,6 @@ src/bin_apricot-pool.obj: src/pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/pool.c' object='src/bin_apricot-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-pool.obj `if test -f 'src/pool.c'; then $(CYGPATH_W) 'src/pool.c'; else $(CYGPATH_W) '$(srcdir)/src/pool.c'; fi`
-
-src/bin_apricot-rewrite.o: src/rewrite.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-rewrite.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-rewrite.Tpo -c -o src/bin_apricot-rewrite.o `test -f 'src/rewrite.c' || echo '$(srcdir)/'`src/rewrite.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-rewrite.Tpo src/$(DEPDIR)/bin_apricot-rewrite.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/rewrite.c' object='src/bin_apricot-rewrite.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-rewrite.o `test -f 'src/rewrite.c' || echo '$(srcdir)/'`src/rewrite.c
-
-src/bin_apricot-rewrite.obj: src/rewrite.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-rewrite.obj -MD -MP -MF src/$(DEPDIR)/bin_apricot-rewrite.Tpo -c -o src/bin_apricot-rewrite.obj `if test -f 'src/rewrite.c'; then $(CYGPATH_W) 'src/rewrite.c'; else $(CYGPATH_W) '$(srcdir)/src/rewrite.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bin_apricot-rewrite.Tpo src/$(DEPDIR)/bin_apricot-rewrite.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/rewrite.c' object='src/bin_apricot-rewrite.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -c -o src/bin_apricot-rewrite.obj `if test -f 'src/rewrite.c'; then $(CYGPATH_W) 'src/rewrite.c'; else $(CYGPATH_W) '$(srcdir)/src/rewrite.c'; fi`
 
 src/bin_apricot-static.o: src/static.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bin_apricot_CFLAGS) $(CFLAGS) -MT src/bin_apricot-static.o -MD -MP -MF src/$(DEPDIR)/bin_apricot-static.Tpo -c -o src/bin_apricot-static.o `test -f 'src/static.c' || echo '$(srcdir)/'`src/static.c

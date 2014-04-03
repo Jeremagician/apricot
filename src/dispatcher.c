@@ -1,5 +1,4 @@
 #include <apricot/dispatcher.h>
-#include <apricot/rewrite.h>
 #include <apricot/dynamic.h>
 #include <apricot/static.h>
 #include <apricot/csapp.h>
@@ -40,8 +39,6 @@ void dispatch(int acceptfd, SA *client_addr)
 		close(acceptfd);
 		return;
 	}
-
-	rewrite(request.uri);
 
 	/*
 	  On parse l'uri pour déterminer quel document le client
